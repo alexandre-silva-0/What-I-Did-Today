@@ -7,6 +7,8 @@ import taskRouters from './routes/TaskRoutes.js'
 const app = express()
 dotenv.config()
 
+app.use(express.json())
+
 app.use(taskRouters)
 
 const startServer = async () => {

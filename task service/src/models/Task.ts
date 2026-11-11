@@ -16,10 +16,10 @@ export class Task extends Model {
     declare content: string
 
     @AllowNull(false)
-    @Column(DataType.DATE)
+    @Column(DataType.TIME)
     declare startedAt: string
 
     @AllowNull(true)
-    @Column(DataType.DATE)
+    @Column(DataType.TIME)
     declare finishedAt: string
 }
