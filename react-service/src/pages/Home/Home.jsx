@@ -1,3 +1,4 @@
+import Navbar from '../../components/Navbar'
 import TaskCard from '../../components/TaskCard'
 import styles from './Home.module.css'
 
@@ -19,6 +20,7 @@ const Home = () => {
                 <TaskCard />
             </div>
 
+            <Navbar />
         </div>
     )
 }

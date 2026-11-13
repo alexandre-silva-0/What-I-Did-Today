@@ -1,4 +1,4 @@
-import './App.css';
+import styles from './App.module.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 //pages
@@ -16,7 +16,7 @@ function AppRoutes() {
 
 function App() {
   return (
-    <div className="App">
+    <div className={styles.App}>
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>

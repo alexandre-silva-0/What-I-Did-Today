@@ -1,16 +1,20 @@
 .card {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    width: 20em;
+    width: 23em;
     height: 8em;
-    background-color: bisque;
     border-radius: 10px;
+    box-shadow: 0px 0px 2px #ccc;
+    padding: 5px;
 }
+
+.card p {}
 
 .time_div {
     background-color: aqua;
     height: 20%;
     display: flex;
     justify-content: space-evenly;
+    position: relative;
+    bottom: 0px;
 }
