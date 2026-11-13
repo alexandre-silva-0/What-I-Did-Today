@@ -11,8 +11,8 @@ const TaskCard = () => {
             <p>{content}</p>
             <hr />
             <div className={styles.time_div} >
-                <p>{startedAt}</p>
-                <p>{finishedAt}</p>
+                <i class="bi bi-clock"></i>
+                <p>{startedAt} - {finishedAt}</p>
             </div>
         </div>
     )

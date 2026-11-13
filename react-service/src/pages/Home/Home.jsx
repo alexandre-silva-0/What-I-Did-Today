@@ -5,7 +5,10 @@ import styles from './Home.module.css'
 const Home = () => {
     return (
         <div className={styles.container}>
-            <h1 className={styles.todaysdate} >Novembro de 11</h1>
+            <header>
+                <p>Hoje</p>
+                <h1>11 de Novembro</h1>
+            </header>
 
             <div className={styles.card_list}>
                 <TaskCard />

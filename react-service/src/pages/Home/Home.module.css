@@ -4,15 +4,68 @@
     align-items: center;
 }
 
-.todaysdate {
+header {
     width: 100%;
-    text-align: start;
-    padding-left: 3%;
-    padding-top: 5px;
-    margin-bottom: 1.2em;
-    background: transparent;
-
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    padding: 20px 20px 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.13);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 0 18px 9px rgba(255, 255, 255, 0.9);
 }
+
+header p {
+    font-size: 16px;
+    color: #888888;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+header h1 {
+    font-size: 32px;
+    color: #1A1A1A;
+    margin: 0;
+    font-weight: 700;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.8),
+            transparent);
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.8),
+            transparent,
+            rgba(255, 255, 255, 0.3));
+}
+
 
 .card_list {
     display: flex;
