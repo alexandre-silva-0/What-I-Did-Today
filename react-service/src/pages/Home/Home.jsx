@@ -1,8 +1,19 @@
+import { useEffect } from 'react'
 import Navbar from '../../components/Navbar'
 import TaskCard from '../../components/TaskCard'
 import styles from './Home.module.css'
+import { useSelector, useDispatch } from 'react-redux'
+import { getTasks } from '../../slices/taskSlice'
 
 const Home = () => {
+
+    const dispatch = useDispatch()
+    const { tasks } = useSelector((state) => state.task)
+
+    useEffect(() => {
+        dispatch(getTasks())
+    }, [dispatch])
+
     return (
         <div className={styles.container}>
             <header>
@@ -11,16 +22,9 @@ const Home = () => {
             </header>
 
             <div className={styles.card_list}>
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
-                <TaskCard />
+                {tasks && tasks.map((task) => (
+                    <TaskCard task={task} key={task.id} />
+                ))}
             </div>
 
             <Navbar />

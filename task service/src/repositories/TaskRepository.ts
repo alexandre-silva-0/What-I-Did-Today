@@ -26,3 +26,7 @@ export const deleteCreatedTask = async (id: number) => {
     await Task.destroy({ where: { id } })
     return
 }
+
+export const getAllTasks = async () => {
+    return await Task.findAll({ raw: true, order: [['createdAt', 'DESC']] })
+}

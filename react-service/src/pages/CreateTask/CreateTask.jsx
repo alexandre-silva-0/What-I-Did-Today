@@ -3,6 +3,7 @@ import styles from './CreateTask.module.css'
 
 //hooks
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 //redux
 import { createTask } from '../../slices/taskSlice'
@@ -15,6 +16,7 @@ const CreateTask = () => {
     const [finishedAt, setFinishedAt] = useState("")
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -23,39 +25,58 @@ const CreateTask = () => {
             content, startedAt, finishedAt
         }
 
-        dispatch(createTask(task))
+        dispatch(createTask(task)).then(navigate('/'))
     }
 
     return (
         <div className={styles.container} >
 
-            <h1>Registrar tarefa</h1>
+            <header>
+                <i
+                    class="bi bi-arrow-left-circle"
+                    onClick={() => navigate(-1)}
+                ></i>
+                <h1>Registrar Tarefa</h1>
+            </header>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder='hoje eu fiz...'
-                    onChange={(e) => setContent(e.target.value)}
-                    value={content}
-                />
-                <input
-                    type="text"
-                    placeholder='09:00'
-                    onChange={(e) => setStartedAt(e.target.value)}
-                    value={startedAt}
-                />
-                <input
-                    type="text"
-                    placeholder='10:00'
-                    onChange={(e) => setFinishedAt(e.target.value)}
-                    value={finishedAt}
-                />
-                <div className={styles.actions_section} >
-                    <button type='submit'>Registrar</button>
+            <form className={styles.form} onSubmit={handleSubmit}>
+                <div className={styles.input_group}>
+                    <label htmlFor="content">Conteúdo da tarefa</label>
+                    <textarea
+                        id="content"
+                        rows={4}
+                        placeholder="Hoje eu fiz..."
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                    />
                 </div>
+
+                <div className={styles.time_row}>
+                    <div className={styles.input_group}>
+                        <label htmlFor="startedAt">Começou às</label>
+                        <input
+                            id="startedAt"
+                            type="time"
+                            value={startedAt}
+                            onChange={(e) => setStartedAt(e.target.value)}
+                        />
+                    </div>
+
+                    <div className={styles.input_group}>
+                        <label htmlFor="finishedAt">Terminou às</label>
+                        <input
+                            id="finishedAt"
+                            type="time"
+                            value={finishedAt}
+                            onChange={(e) => setFinishedAt(e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                <button type="submit" className={styles.submit_button}>
+                    Registrar
+                </button>
             </form>
-
-
 
         </div>
     )

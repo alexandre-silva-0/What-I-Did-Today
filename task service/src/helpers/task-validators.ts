@@ -13,7 +13,7 @@ export const createTaskValidation = [
 export const updateTaskValidation = [
     param("id")
         .custom(async (value) => {
-            const task = await getTaskById(parseInt(value))
+            const task = await getTaskById(Number(value))
 
             if (!task) {
                 throw new Error("Task não encontrada.")

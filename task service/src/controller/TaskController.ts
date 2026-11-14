@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import { ITask } from "../dtos/tasks.dto.js";
 
 //repositories
-import { createNewTask, deleteCreatedTask, updateTaskData } from "../repositories/TaskRepository.js";
+import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById } from "../repositories/TaskRepository.js";
 
 export async function createTask(req: Request, res: Response) {
     const { content, startedAt, finishedAt } = req.body
@@ -56,4 +56,39 @@ export async function deleteTask(req: Request, res: Response) {
     } catch (error) {
         console.error("Não foi possível apagar task... ", error)
     }
+}
+
+export async function getTasks(req: Request, res: Response) {
+
+    try {
+
+        const tasks = await getAllTasks()
+
+        res.status(200).json({
+            msg: "Sucesso ao carregar todas as tarefas",
+            data: tasks
+        })
+
+    } catch (error) {
+        console.error("Não foi possível listar todas as tarefas. ", error)
+    }
+
+}
+
+export async function getTaskId(req: Request, res: Response) {
+
+    let { id } = req.params
+
+    try {
+        const task = await getTaskById(Number(id))
+
+        res.status(200).json({
+            msg: "Sucesso ao carregar tarefa",
+            data: task
+        })
+
+    } catch (error) {
+        console.error("Não foi possível localizar tarefa. ", error)
+    }
+
 }

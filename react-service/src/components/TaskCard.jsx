@@ -1,18 +1,18 @@
 import styles from './TaskCard.module.css'
 
-const TaskCard = () => {
+import { useNavigate } from 'react-router-dom'
 
-    const content = "É aqui que a task vai ficar e tals"
-    const startedAt = "09:00:00 AM"
-    const finishedAt = "10:00:00 AM"
+const TaskCard = ({ task }) => {
+
+    const navigate = useNavigate()
 
     return (
-        <div className={styles.card}>
-            <p>{content}</p>
+        <div className={styles.card} onClick={() => { navigate(`/task/${task.id}`) }}>
+            <p>{task.content}</p>
             <hr />
             <div className={styles.time_div} >
                 <i class="bi bi-clock"></i>
-                <p>{startedAt} - {finishedAt}</p>
+                <p>{task.startedAt} - {task.finishedAt}</p>
             </div>
         </div>
     )

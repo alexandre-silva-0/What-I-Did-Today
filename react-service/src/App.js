@@ -6,6 +6,7 @@ import { store } from './store'
 //pages
 import Home from './pages/Home/Home';
 import CreateTask from './pages/CreateTask/CreateTask';
+import TaskDetails from './pages/TaskDetails/TaskDetails';
 
 function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ function AppRoutes() {
       <Routes>
         <Route path='/' element={<Home />} ></Route>
         <Route path='/task/create' element={<CreateTask />}></Route>
+        <Route path='/task/:id' element={<TaskDetails />}></Route>
       </Routes>
     </>
   )

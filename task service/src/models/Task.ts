@@ -2,7 +2,7 @@ import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType, AllowNull } 
 
 @Table({
     tableName: 'task',
-    timestamps: false
+    timestamps: true
 })
 
 export class Task extends Model {
