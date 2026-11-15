@@ -5,10 +5,16 @@ import styles from './Home.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getTasks } from '../../slices/taskSlice'
 
+
 const Home = () => {
 
     const dispatch = useDispatch()
     const { tasks } = useSelector((state) => state.task)
+    const today = new Date()
+
+    const sortedTasks = tasks.filter((task) => {
+        return task.createdAt.startsWith(today.toLocaleDateString('en-CA'));
+    });
 
     useEffect(() => {
         dispatch(getTasks())
@@ -18,11 +24,11 @@ const Home = () => {
         <div className={styles.container}>
             <header>
                 <p>Hoje</p>
-                <h1>11 de Novembro</h1>
+                <h1>{today.toLocaleDateString('pt-br')}</h1>
             </header>
 
             <div className={styles.card_list}>
-                {tasks && tasks.map((task) => (
+                {sortedTasks && sortedTasks.map((task) => (
                     <TaskCard task={task} key={task.id} />
                 ))}
             </div>

@@ -1,4 +1,5 @@
-export const api = "http://192.168.1.4:3001";
+// export const api = 'https://widt-back.oasis-server.com.br';
+export const api = 'http://192.168.1.11:3001';
 
 export const requestConfig = (method, data = null) => {
     let config;

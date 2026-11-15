@@ -11,7 +11,12 @@ dotenv.config()
 //config
 app.use(express.json())
 app.use(cors({
-    origin: 'http://192.168.1.4:3000',
+    origin: [
+        'http://192.168.1.11:3000',
+        'http://localhost:3000',
+        'https://widt-front.oasis-server.com.br',
+        'https://widt-back.oasis-server.com.br'
+    ],
     credentials: true
 }))
 

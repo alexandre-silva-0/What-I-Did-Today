@@ -2,30 +2,44 @@
 import styles from './CreateTask.module.css'
 
 //hooks
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 //redux
-import { createTask } from '../../slices/taskSlice'
-import { useDispatch } from 'react-redux'
+import { createTask, reset } from '../../slices/taskSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 const CreateTask = () => {
 
+    const { error } = useSelector((state) => state.task)
+
     const [content, setContent] = useState("")
-    const [startedAt, setStartedAt] = useState("")
-    const [finishedAt, setFinishedAt] = useState("")
+    const [startedAt, setStartedAt] = useState("09:00")
+    const [finishedAt, setFinishedAt] = useState("10:00")
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        setTimeout(() => {
+            dispatch(reset())
+        }, 3000)
+    }, [error, dispatch])
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         const task = {
             content, startedAt, finishedAt
         }
 
-        dispatch(createTask(task)).then(navigate('/'))
+        try {
+            await dispatch(createTask(task)).unwrap()
+
+            navigate('/', { replace: true })
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return (
@@ -45,7 +59,7 @@ const CreateTask = () => {
                     <textarea
                         id="content"
                         rows={4}
-                        placeholder="Hoje eu fiz..."
+                        placeholder={error ? error : "Hoje eu fiz..."}
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                     />

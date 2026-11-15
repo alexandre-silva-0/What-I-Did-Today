@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 //redux
-import { createTask, getTaskById } from '../../slices/taskSlice'
+import { deleteTask, getTaskById, updateTask } from '../../slices/taskSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 const TaskDetails = () => {
@@ -15,6 +15,7 @@ const TaskDetails = () => {
     const [content, setContent] = useState(task.content)
     const [startedAt, setStartedAt] = useState(task.startedAt)
     const [finishedAt, setFinishedAt] = useState(task.finishedAt)
+    const [deleteModal, setDeleteModal] = useState(false)
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -36,11 +37,14 @@ const TaskDetails = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        const task = {
-            content, startedAt, finishedAt
+        const updatedTask = {
+            id: task.id,
+            content,
+            startedAt,
+            finishedAt
         }
 
-        dispatch(createTask(task)).then(navigate('/'))
+        dispatch(updateTask(updatedTask)).then(navigate('/'))
     }
 
     return (
@@ -88,10 +92,49 @@ const TaskDetails = () => {
                     </div>
                 </div>
 
-                <button type="submit" className={styles.submit_button}>
-                    Editar
-                </button>
+                <div className={styles.actions_div}>
+                    <button type="submit" className={styles.submit_button}>
+                        Editar
+                    </button>
+                    <button type='button' className={styles.delete_button} onClick={() => { setDeleteModal(true) }} ><i class="bi bi-trash3"></i></button>
+                </div>
             </form>
+
+            {deleteModal && (
+                <div
+                    className={styles.modal_overlay}
+                    onClick={() => setDeleteModal(false)}
+                >
+                    <div
+                        className={styles.delete_modal}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h2>Apagar tarefa?</h2>
+                        <div className={styles.delete_modal_buttons}>
+                            <button
+                                type="button"
+                                onClick={() => setDeleteModal(false)}
+                            >
+                                Não
+                            </button>
+                            <button
+                                type="button"
+                                onClick={async () => {
+                                    try {
+                                        await dispatch(deleteTask(task.id)).unwrap();
+                                        setDeleteModal(false);
+                                        navigate('/', { replace: true });
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                }}
+                            >
+                                Sim
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </div>
     )

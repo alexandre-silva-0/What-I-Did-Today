@@ -1,0 +1,31 @@
+.container {
+  position: fixed; /* Tira o elemento do fluxo e impede de empurrar a página */
+  top: 20px;
+  left: 16px;
+  right: 16px;
+  max-width: 380px;
+  margin: 0 auto;
+  z-index: 99999; /* Fica acima do header e do loading */
+
+  padding: 14px 18px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  animation: slideDown 0.25s ease-out;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.success {
+  background-color: #E6F7ED;
+  color: #14532D;
+  border: 1px solid #BBF7D0;
+}
+
+.error {
+  background-color: #FEE2E2;
+  color: #7F1D1D;
+  border: 1px solid #FECACA;
+}

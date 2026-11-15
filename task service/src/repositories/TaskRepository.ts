@@ -19,7 +19,8 @@ export const getTaskById = async (id: number) => {
 }
 
 export const updateTaskData = async (data: IUpdateTask, id: number) => {
-    return await Task.update(data, { where: { id } })
+    await Task.update(data, { where: { id } })
+    return Task.findByPk(id, { raw: true })
 }
 
 export const deleteCreatedTask = async (id: number) => {

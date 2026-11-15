@@ -52,7 +52,7 @@ export async function deleteTask(req: Request, res: Response) {
 
     try {
         await deleteCreatedTask(parseInt(id))
-        res.status(200).json({ msg: "Task apagada com sucesso!" })
+        res.status(200).json({ msg: "Task apagada com sucesso!", id: id })
     } catch (error) {
         console.error("Não foi possível apagar task... ", error)
     }

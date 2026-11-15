@@ -124,12 +124,17 @@ header i {
     gap: 14px;
 }
 
-.submit_button {
+.actions_div {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+.actions_div button {
     margin-top: 12px;
     height: 52px;
     border: none;
-    border-radius: 16px;
-    background-color: #2563EB;
+    border-radius: 10px;
     color: #FFFFFF;
     font-size: 16px;
     font-weight: 600;
@@ -138,7 +143,118 @@ header i {
     transition: transform 0.15s ease, background-color 0.2s ease;
 }
 
-.submit_button:active {
-    transform: scale(0.98);
-    background-color: #1D4ED8;
+.submit_button {
+    width: 80%;
+    background-color: #2563EB;
+}
+
+.delete_button {
+    width: 20%;
+    font-size: larger;
+    background-color: red;
+}
+
+
+.modal_overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(17, 24, 39, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 9998;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.delete_modal {
+    width: 100%;
+    max-width: 320px;
+    background-color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    padding: 24px 20px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.14);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    animation: popIn 0.2s ease-out;
+}
+
+.delete_modal h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A1A;
+    text-align: center;
+}
+
+.delete_modal_buttons {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.delete_modal_buttons button {
+    flex: 1;
+    height: 46px;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.delete_modal_buttons button:active {
+    transform: scale(0.97);
+}
+
+/* Botão Não*/
+.delete_modal_buttons button:first-child {
+    background-color: #F4F5F7;
+    color: #4B5563;
+    border: 1px solid #ccc;
+}
+
+.delete_modal_buttons button:first-child:active {
+    background-color: #E5E7EB;
+}
+
+/* Botão Sim */
+.delete_modal_buttons button:last-child {
+    background-color: #EF4444;
+    color: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25);
+}
+
+.delete_modal_buttons button:last-child:active {
+    background-color: #DC2626;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }

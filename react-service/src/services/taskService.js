@@ -42,10 +42,42 @@ const getTaskById = async (id) => {
     }
 }
 
+const updateTask = async (data) => {
+    const config = requestConfig("PATCH", data)
+
+    try {
+
+        const res = await fetch(api + `/api/tasks/${data.id}/update`, config)
+            .then((res) => res.json())
+            .catch((err) => err)
+
+        return res
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const deleteTask = async (id) => {
+    const config = requestConfig("DELETE")
+
+    try {
+        const res = await fetch(api + `/api/tasks/${id}/delete`, config)
+            .then((res) => res.json())
+            .catch(err => err)
+
+        return res
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 const taskService = {
     createTask,
     getTasks,
-    getTaskById
+    getTaskById,
+    updateTask,
+    deleteTask
 }
 
 export default taskService
