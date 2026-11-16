@@ -23,16 +23,14 @@ app.use(cors({
 app.use(taskRouters)
 
 const startServer = async () => {
-    try {
-        database
-            .sync()
-            .then(() => {
-                app.listen(process.env.PORT)
-                console.log('Listening on ', process.env.PORT)
-            })
-    } catch (error) {
-        console.error("Unable to initiate server. Error: ", error)
-    }
+
+    await database
+        .sync()
+        .then(() => {
+            app.listen(process.env.PORT)
+            console.log('Listening on ', process.env.PORT)
+        })
+
 }
 
 startServer()

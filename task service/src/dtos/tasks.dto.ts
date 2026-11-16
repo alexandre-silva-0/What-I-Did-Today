@@ -9,3 +9,15 @@ export interface IUpdateTask {
     startedAt?: string,
     finishedAt?: string
 }
+
+export interface IAssignment {
+    content: string,
+    status: string,
+    deadline?: string
+}
+
+export interface IUpdateAssignment {
+    content?: string,
+    status?: string,
+    deadline?: string
+}

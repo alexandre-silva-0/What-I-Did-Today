@@ -4,7 +4,7 @@ const createTask = async (data) => {
     const config = requestConfig("POST", data)
 
     try {
-        const res = await fetch(api + '/api/tasks/create', config)
+        const res = await fetch(api + '/api/tasks', config)
             .then((res) => res.json())
             .catch((err) => err)
 
@@ -32,7 +32,7 @@ const getTaskById = async (id) => {
     const config = requestConfig("GET")
 
     try {
-        const res = await fetch(api + `/api/task/${id}`, config)
+        const res = await fetch(api + `/api/tasks/${id}`, config)
             .then((res) => res.json())
             .catch((err) => err)
 
@@ -47,7 +47,7 @@ const updateTask = async (data) => {
 
     try {
 
-        const res = await fetch(api + `/api/tasks/${data.id}/update`, config)
+        const res = await fetch(api + `/api/tasks/${data.id}`, config)
             .then((res) => res.json())
             .catch((err) => err)
 
@@ -62,7 +62,7 @@ const deleteTask = async (id) => {
     const config = requestConfig("DELETE")
 
     try {
-        const res = await fetch(api + `/api/tasks/${id}/delete`, config)
+        const res = await fetch(api + `/api/tasks/${id}`, config)
             .then((res) => res.json())
             .catch(err => err)
 

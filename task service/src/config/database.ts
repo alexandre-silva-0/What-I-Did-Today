@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import { Task } from "../models/Task.js";
 import dotenv from 'dotenv'
+import { Assignment } from "../models/Assignment.js";
 
 dotenv.config()
 
@@ -11,7 +12,7 @@ const sequelize = new Sequelize({
     password: process.env.DB_PSSWD!,
     host: process.env.DB_HOST!,
     port: 3308,
-    models: [Task]
+    models: [Task, Assignment]
 })
 
 const testConnection = async () => {

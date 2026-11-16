@@ -1,11 +1,8 @@
 //dependencies
 import { Request, Response } from "express";
 
-//interfaces
-import { ITask } from "../dtos/tasks.dto.js";
-
 //repositories
-import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById } from "../repositories/TaskRepository.js";
+import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById, createNewAssignment, updateAnAssignment, destroyAssignment } from "../repositories/TaskRepository.js";
 
 export async function createTask(req: Request, res: Response) {
     const { content, startedAt, finishedAt } = req.body
@@ -22,6 +19,7 @@ export async function createTask(req: Request, res: Response) {
             data: createdTask
         })
     } catch (error) {
+        res.status(500).json({ error: error })
         console.error('Não foi possível registrar a atividade...', error)
     }
 }
@@ -89,6 +87,56 @@ export async function getTaskId(req: Request, res: Response) {
 
     } catch (error) {
         console.error("Não foi possível localizar tarefa. ", error)
+    }
+
+}
+
+export async function createAssignment(req: Request, res: Response) {
+    const { content, status, deadline } = req.body
+
+    const assignment = { content, status, deadline }
+
+    try {
+        const createdAssignment = await createNewAssignment(assignment)
+
+
+        res.status(201).json({ msg: 'Pendência criada com sucessso.', data: createdAssignment })
+
+    } catch (error) {
+        res.status(500).json({ error: `Não foi possível criar uma pendência... ${error}`, })
+    }
+}
+
+export async function updateAssignment(req: Request, res: Response) {
+
+    const { id } = req.params
+    const { content, status, deadline } = req.body
+
+    const assignment = { content, status, deadline }
+
+    try {
+
+        const updatedAssignment = await updateAnAssignment(assignment, Number(id))
+
+        res.status(200).json({ msg: "Pendência atualizada.", data: updatedAssignment })
+
+    } catch (error) {
+        res.status(500).json({ error: `Não foi possível editar está pendência... ${error}`, })
+    }
+}
+
+export async function deleteAssignment(req: Request, res: Response) {
+
+    const { id } = req.params
+
+    try {
+
+        await destroyAssignment(Number(id))
+
+        res.status(200).json({ msg: "Pendência excluída com sucesso.", data: { id: id } })
+
+    } catch (error) {
+        res.status(500).json({ error: `Não foi possível excluir está pendência... ${error}`, })
     }
 
 }

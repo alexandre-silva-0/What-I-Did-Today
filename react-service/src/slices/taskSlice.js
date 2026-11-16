@@ -159,7 +159,7 @@ export const taskSlice = createSlice({
                 state.task = {}
                 console.log(action.payload)
                 state.tasks = state.tasks.filter(
-                    (task) => task.id !== action.payload.data,
+                    (task) => task.id !== action.payload.id,
                 );
                 state.error = false
                 state.success = true
