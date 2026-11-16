@@ -5,16 +5,18 @@ import styles from './Home.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getTasks } from '../../slices/taskSlice'
 
-
 const Home = () => {
-
     const dispatch = useDispatch()
     const { tasks } = useSelector((state) => state.task)
     const today = new Date()
+    const todayString = today.toLocaleDateString('en-CA')
 
-    const sortedTasks = tasks.filter((task) => {
-        return task.createdAt.startsWith(today.toLocaleDateString('en-CA'));
-    });
+    const sortedTasks = Array.isArray(tasks)
+        ? tasks.filter((task) => {
+              if (!task?.createdAt) return false
+              return new Date(task.createdAt).toLocaleDateString('en-CA') === todayString
+          })
+        : []
 
     useEffect(() => {
         dispatch(getTasks())
@@ -22,15 +24,21 @@ const Home = () => {
 
     return (
         <div className={styles.container}>
-            <header>
+            <header className={styles.header}>
                 <p>Hoje</p>
-                <h1>{today.toLocaleDateString('pt-br')}</h1>
+                <h1>{today.toLocaleDateString('pt-BR')}</h1>
             </header>
 
             <div className={styles.card_list}>
-                {sortedTasks && sortedTasks.map((task) => (
+                {sortedTasks.map((task) => (
                     <TaskCard task={task} key={task.id} />
                 ))}
+                {sortedTasks.length === 0 && (
+                    <div className={styles.no_tasks}>
+                        <h3>Nenhuma tarefa registrada hoje.</h3>
+                        <p>Comece agora ;)</p>
+                    </div>
+                )}
             </div>
 
             <Navbar />

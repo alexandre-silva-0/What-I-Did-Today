@@ -1,27 +1,20 @@
-//css
 import styles from './TaskDetails.module.css'
-
-//hooks
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-
-//redux
 import { deleteTask, getTaskById, updateTask } from '../../slices/taskSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 const TaskDetails = () => {
-
     const { task } = useSelector((state) => state.task)
-    const [content, setContent] = useState(task.content)
-    const [startedAt, setStartedAt] = useState(task.startedAt)
-    const [finishedAt, setFinishedAt] = useState(task.finishedAt)
+    const [content, setContent] = useState(task?.content || '')
+    const [startedAt, setStartedAt] = useState(task?.startedAt || '')
+    const [finishedAt, setFinishedAt] = useState(task?.finishedAt || '')
     const [deleteModal, setDeleteModal] = useState(false)
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
-
     const { id } = useParams()
+
     useEffect(() => {
         dispatch(getTaskById(id))
     }, [id, dispatch])
@@ -34,7 +27,15 @@ const TaskDetails = () => {
         }
     }, [task, id])
 
-    const handleSubmit = (e) => {
+    const handleBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1)
+        } else {
+            navigate('/')
+        }
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         const updatedTask = {
@@ -44,17 +45,25 @@ const TaskDetails = () => {
             finishedAt
         }
 
-        dispatch(updateTask(updatedTask)).then(navigate('/'))
+        try {
+            await dispatch(updateTask(updatedTask)).unwrap()
+            navigate('/', { replace: true })
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return (
-        <div className={styles.container} >
-
-            <header>
-                <i
-                    class="bi bi-arrow-left-circle"
-                    onClick={() => navigate(-1)}
-                ></i>
+        <div className={styles.container}>
+            <header className={styles.header}>
+                <button
+                    type="button"
+                    className={styles.back_button}
+                    onClick={handleBack}
+                    aria-label="Voltar"
+                >
+                    <i className="bi bi-arrow-left-circle"></i>
+                </button>
                 <h1>Editar Tarefa</h1>
             </header>
 
@@ -96,7 +105,14 @@ const TaskDetails = () => {
                     <button type="submit" className={styles.submit_button}>
                         Editar
                     </button>
-                    <button type='button' className={styles.delete_button} onClick={() => { setDeleteModal(true) }} ><i class="bi bi-trash3"></i></button>
+                    <button
+                        type="button"
+                        className={styles.delete_button}
+                        onClick={() => setDeleteModal(true)}
+                        aria-label="Apagar tarefa"
+                    >
+                        <i className="bi bi-trash3"></i>
+                    </button>
                 </div>
             </form>
 
@@ -121,11 +137,11 @@ const TaskDetails = () => {
                                 type="button"
                                 onClick={async () => {
                                     try {
-                                        await dispatch(deleteTask(task.id)).unwrap();
-                                        setDeleteModal(false);
-                                        navigate('/', { replace: true });
+                                        await dispatch(deleteTask(task.id)).unwrap()
+                                        setDeleteModal(false)
+                                        navigate('/', { replace: true })
                                     } catch (error) {
-                                        console.error(error);
+                                        console.error(error)
                                     }
                                 }}
                             >
@@ -135,8 +151,8 @@ const TaskDetails = () => {
                     </div>
                 </div>
             )}
-
         </div>
     )
 }
+
 export default TaskDetails

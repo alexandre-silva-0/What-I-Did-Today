@@ -1,4 +1,4 @@
-import styles from './LoadingScreen.module.css';
+import styles from './LoadingScreen.module.css'
 
 const LoadingScreen = () => {
     return (
@@ -12,7 +12,7 @@ const LoadingScreen = () => {
                 <p className={styles.text}>Carregando...</p>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default LoadingScreen;
+export default LoadingScreen

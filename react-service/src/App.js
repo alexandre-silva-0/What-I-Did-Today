@@ -12,6 +12,7 @@ import CreateTask from './pages/CreateTask/CreateTask';
 import TaskDetails from './pages/TaskDetails/TaskDetails';
 import LoadingScreen from './components/LoadingScreen'
 import Toast from './components/Toast';
+import Logs from './pages/Logs/Logs';
 
 function AppRoutes() {
 
@@ -27,6 +28,7 @@ function AppRoutes() {
         <Route path='/' element={<Home />} ></Route>
         <Route path='/task/create' element={<CreateTask />}></Route>
         <Route path='/task/:id' element={<TaskDetails />}></Route>
+        <Route path='/tasks/logs' element={<Logs />}></Route>
       </Routes>
     </>
   )

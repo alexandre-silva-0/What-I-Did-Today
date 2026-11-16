@@ -1,6 +1,10 @@
 .overlay {
     position: fixed;
     inset: 0;
+    width: 100%;
+    height: 100dvh;
+    padding: 16px;
+    box-sizing: border-box;
     background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -20,6 +24,8 @@
     flex-direction: column;
     align-items: center;
     gap: 14px;
+    max-width: 90vw;
+    box-sizing: border-box;
 }
 
 .dots {
@@ -52,7 +58,7 @@
 
 .text {
     margin: 0;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: inherit;
     font-size: 14px;
     font-weight: 600;
     color: #4B5563;
