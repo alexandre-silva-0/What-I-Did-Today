@@ -1,34 +1,18 @@
-import { body, param } from "express-validator";
+import { body } from "express-validator";
 import { getAssignmentById } from "../repositories/TaskRepository.js";
+import { atLeastOneFieldRule, existingIdRule } from "./common-validators.js";
 
 const STATUS = ['pending', 'in_progress', 'done']
 
-// ---------- Regras reaproveitadas ----------
-
-// :id precisa ser um inteiro positivo e existir no banco
-const assignmentIdRule = param('id')
-    .isInt({ min: 1 }).withMessage("ID inválido.")
-    .bail()
-    .custom(async (value) => {
-        const assignment = await getAssignmentById(Number(value))
-
-        if (!assignment) {
-            throw new Error("Pendência não encontrada.")
-        }
-
-        return true
-    })
+const assignmentIdRule = existingIdRule(getAssignmentById, "Pendência não encontrada.")
 
 const statusRule = body('status')
     .optional()
     .isIn(STATUS).withMessage(`Status inválido. Use: ${STATUS.join(', ')}.`)
 
-// deadline é opcional: aceita ausente ou null (pendência sem prazo)
 const deadlineRule = body('deadline')
     .optional({ values: 'null' })
     .isISO8601().withMessage("Prazo inválido. Use o formato AAAA-MM-DD.")
-
-// ---------- Validações por rota ----------
 
 export const createAssignmentValidation = [
     body('content')
@@ -52,19 +36,7 @@ export const updateAssignmentValidation = [
         .notEmpty().withMessage("A descrição não pode ficar vazia."),
     statusRule,
     deadlineRule,
-    // PATCH sem nenhum campo conhecido não faz sentido
-    body().custom((data) => {
-        const fields = ['content', 'status', 'deadline']
-        const hasField = fields.some((field) => data?.[field] !== undefined)
-
-        if (!hasField) {
-            throw new Error("Envie ao menos um campo para atualizar: content, status ou deadline.")
-        }
-
-        return true
-    })
+    atLeastOneFieldRule(['content', 'status', 'deadline'])
 ]
 
-export const deleteAssignmentValidation = [
-    assignmentIdRule
-]
+export const deleteAssignmentValidation = [assignmentIdRule]
