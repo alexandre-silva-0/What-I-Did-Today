@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 
 //repositories
-import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById, createNewAssignment, updateAnAssignment, destroyAssignment } from "../repositories/TaskRepository.js";
+import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById, createNewAssignment, updateAnAssignment, destroyAssignment, getAllAssignments } from "../repositories/TaskRepository.js";
 
 export async function createTask(req: Request, res: Response) {
     const { content, startedAt, finishedAt } = req.body
@@ -135,6 +135,21 @@ export async function deleteAssignment(req: Request, res: Response) {
 
     } catch (error) {
         res.status(500).json({ error: `Não foi possível excluir está pendência... ${error}`, })
+    }
+}
+
+export async function getAssignments(req: Request, res: Response) {
+
+    try {
+        const assignments = await getAllAssignments()
+
+        res.status(200).json({
+            msg: "Sucesso ao carregar todas as pendências",
+            data: assignments
+        })
+
+    } catch (error) {
+        res.status(500).json({ error: `Não foi possível carregar todas as pendências... ${error}` })
     }
 
 }

@@ -49,3 +49,11 @@ export const destroyAssignment = async (id: number) => {
     await Assignment.destroy({ where: { id } })
     return
 }
+
+export const getAllAssignments = async () => {
+    return await Assignment.findAll({ raw: true, order: [['createdAt', 'DESC']] })
+}
+
+export const getAssignmentById = async (id: number) => {
+    return await Assignment.findByPk(id, { raw: true })
+}
