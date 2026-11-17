@@ -1,16 +1,17 @@
 .container {
     display: flex;
     align-items: center;
+    gap: 22px;
     position: fixed;
-    bottom: 20px;
-    list-style: none;
-    gap: 1em;
-    padding: 5px 20px;
-    font-size: 40px;
-    color: rgb(0, 0, 0);
+    left: 50%;
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 20;
+    padding: 8px 18px;
     background: rgba(255, 255, 255, 0.14);
     backdrop-filter: blur(50px);
-    border-radius: 20px;
+    -webkit-backdrop-filter: blur(50px);
+    border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.1),
@@ -46,7 +47,104 @@
             rgba(255, 255, 255, 0.3));
 }
 
-.add_task_button {
-    font-size: larger;
-    color: rgb(20, 91, 255);
+/* ---------- Ícones laterais ---------- */
+.item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 28px;
+    color: #4B5563;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+
+.item:hover {
+    color: #1A1A1A;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.item:active {
+    transform: scale(0.9);
+}
+
+/* Tela atual: ícone azul + pontinho embaixo */
+.item_active {
+    color: #2563EB;
+}
+
+.item_active:hover {
+    color: #2563EB;
+}
+
+.item_active::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+/* ---------- Botão central ---------- */
+.center_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #2563EB;
+    color: #FFFFFF;
+    font-size: 26px;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow:
+        0 6px 14px rgba(37, 99, 235, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.center_button:hover {
+    background-color: #1D4ED8;
+}
+
+.center_button:active {
+    transform: scale(0.92);
+}
+
+.center_icon {
+    display: flex;
+    animation: iconPop 0.25s ease-out;
+}
+
+.item:focus-visible,
+.center_button:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.4);
+    outline-offset: 2px;
+}
+
+@keyframes iconPop {
+    from {
+        opacity: 0;
+        transform: scale(0.6) rotate(-45deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .center_icon {
+        animation: none;
+    }
 }

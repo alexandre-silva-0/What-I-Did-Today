@@ -8,83 +8,28 @@
     box-sizing: border-box;
 }
 
-.header {
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 16px;
-    padding: 20px 20px 14px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.13);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 0px 0px 20px 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 0 18px 9px rgba(255, 255, 255, 0.9);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-            transparent,
-            rgba(255, 255, 255, 0.8),
-            transparent);
-}
-
-.header::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(180deg,
-            rgba(255, 255, 255, 0.8),
-            transparent,
-            rgba(255, 255, 255, 0.3));
-}
-
-.header p {
-    font-size: 16px;
-    color: #888888;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 500;
-}
-
+/* Seletor de data que fica dentro do PageHeader */
 .date_input {
     width: 100%;
     box-sizing: border-box;
     font-family: inherit;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
-    color: #1A1A1A;
-    background-color: rgba(255, 255, 255, 0.65);
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    letter-spacing: -0.02em;
+    color: #111827;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(17, 24, 39, 0.08);
     border-radius: 14px;
     padding: 8px 14px;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .date_input:focus {
     background-color: #FFFFFF;
     border-color: #2563EB;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 /* Ajuste do ícone de calendário nativo no Chrome/Android */
@@ -94,11 +39,23 @@
     padding: 4px;
 }
 
+/* Mesmo espaçamento da lista da Home */
 .card_list {
     display: flex;
     flex-direction: column;
-    gap: 1em;
-    margin-bottom: 100px;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 16px;
+    gap: 14px;
+    margin-bottom: 110px;
+}
+
+@media (min-width: 768px) {
+    .card_list {
+        padding: 0 24px;
+        gap: 16px;
+    }
 }
 
 .empty_message {

@@ -1,0 +1,245 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 16px 40px;
+}
+
+/* ---------- Seções: cartões brancos neutros, azul só como destaque ---------- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
+  background-color: #FFFFFF;
+  border: 1px solid #ECEEF2;
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.04),
+    0 8px 24px rgba(17, 24, 39, 0.05);
+}
+
+.section_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.section_label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Ícone do título dentro de um quadradinho azul claro */
+.section_label i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background-color: #EEF3FF;
+  color: #2563EB;
+  font-size: 15px;
+}
+
+.counter {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.counter_warn {
+  color: #B91C1C;
+}
+
+/* ---------- Campos ---------- */
+.textarea,
+.time_input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #F5F6F8;
+  border: 1.5px solid #ECEEF2;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 16px;
+  color: #1F2937;
+  outline: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.textarea {
+  min-height: 120px;
+  padding: 14px 16px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.textarea::placeholder {
+  color: #9CA3AF;
+}
+
+.time_input {
+  padding: 12px 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.textarea:focus,
+.time_input:focus {
+  background-color: #FFFFFF;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.time_row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 10px;
+}
+
+.time_field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.time_field label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+.time_arrow {
+  padding-bottom: 14px;
+  color: #9CA3AF;
+}
+
+/* Chip de duração em azul claro */
+.duration {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background-color: #EEF3FF;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1D4ED8;
+}
+
+.hint {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+/* ---------- Erro ---------- */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background-color: #FEE2E2;
+  border: 1px solid #FECACA;
+  color: #7F1D1D;
+  font-size: 14px;
+}
+
+/* ---------- Ações ---------- */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.submit,
+.delete {
+  height: 52px;
+  border-radius: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background-color: #2563EB;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.submit:hover:not(:disabled) {
+  background-color: #1D4ED8;
+}
+
+.submit:disabled {
+  background-color: #9DB7F5;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.delete {
+  width: 52px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #FECACA;
+  background-color: #FEF2F2;
+  color: #DC2626;
+  font-size: 20px;
+}
+
+.delete:hover {
+  background-color: #FEE2E2;
+}
+
+.submit:active:not(:disabled),
+.delete:active {
+  transform: scale(0.97);
+}
+
+.submit:focus-visible,
+.delete:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.4);
+  outline-offset: 2px;
+}
+
+/* Telas muito estreitas: horários um embaixo do outro */
+@media (max-width: 360px) {
+  .time_row {
+    grid-template-columns: 1fr;
+  }
+
+  .time_arrow {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .form {
+    padding: 0 24px 48px;
+  }
+}

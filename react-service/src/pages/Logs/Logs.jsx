@@ -10,6 +10,7 @@ import { getTasks } from '../../slices/taskSlice'
 
 //components
 import Navbar from '../../components/Navbar'
+import PageHeader from '../../components/PageHeader'
 import TaskCard from '../../components/TaskCard'
 
 const Logs = () => {
@@ -28,15 +29,15 @@ const Logs = () => {
 
     return (
         <div className={styles.container}>
-            <header className={styles.header}>
-                <p>Registros</p>
+            <PageHeader label="Registros">
                 <input
                     type="date"
                     className={styles.date_input}
+                    aria-label="Data dos registros"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                 />
-            </header>
+            </PageHeader>
 
             <div className={styles.card_list}>
                 {Array.isArray(sortedTasks) && sortedTasks.length > 0 ? (

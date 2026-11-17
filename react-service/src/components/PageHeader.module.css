@@ -1,0 +1,126 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 18px;
+  padding: calc(18px + env(safe-area-inset-top)) 20px 16px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-top: none;
+  border-radius: 0 0 24px 24px;
+  box-shadow:
+    0 10px 30px rgba(17, 24, 39, 0.08),
+    0 1px 0 rgba(17, 24, 39, 0.04),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* Reflexo sutil na borda de baixo, mantendo o efeito "vidro" */
+.header::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.9),
+      transparent);
+  pointer-events: none;
+}
+
+.top_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+
+/* ---------- Voltar ---------- */
+.back_button {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.06);
+  color: #111827;
+  font-size: 17px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.back_button:hover {
+  background-color: #FFFFFF;
+}
+
+.back_button:active {
+  transform: scale(0.92);
+}
+
+/* ---------- Textos ---------- */
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Slots ---------- */
+.action {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.extra {
+  width: 100%;
+}
+
+.back_button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.4);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .header {
+    padding: calc(24px + env(safe-area-inset-top)) 28px 20px;
+    margin-bottom: 22px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+}

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import Navbar from '../../components/Navbar'
+import PageHeader from '../../components/PageHeader'
 import TaskCard from '../../components/TaskCard'
 import styles from './Home.module.css'
 import { useSelector, useDispatch } from 'react-redux'
@@ -24,10 +25,10 @@ const Home = () => {
 
     return (
         <div className={styles.container}>
-            <header className={styles.header}>
-                <p>Hoje</p>
-                <h1>{today.toLocaleDateString('pt-BR')}</h1>
-            </header>
+            <PageHeader
+                label={`Hoje · ${today.toLocaleDateString('pt-BR', { weekday: 'long' })}`}
+                title={today.toLocaleDateString('pt-BR')}
+            />
 
             <div className={styles.card_list}>
                 {sortedTasks.map((task) => (

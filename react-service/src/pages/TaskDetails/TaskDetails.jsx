@@ -1,14 +1,15 @@
 import styles from './TaskDetails.module.css'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteTask, getTaskById, updateTask } from '../../slices/taskSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import { deleteTask, getTaskById, updateTask } from '../../slices/taskSlice'
+
+//components
+import PageHeader from '../../components/PageHeader'
+import TaskForm from '../../components/TaskForm'
 
 const TaskDetails = () => {
-    const { task } = useSelector((state) => state.task)
-    const [content, setContent] = useState(task?.content || '')
-    const [startedAt, setStartedAt] = useState(task?.startedAt || '')
-    const [finishedAt, setFinishedAt] = useState(task?.finishedAt || '')
+    const { task, loading } = useSelector((state) => state.task)
     const [deleteModal, setDeleteModal] = useState(false)
 
     const dispatch = useDispatch()
@@ -19,34 +20,26 @@ const TaskDetails = () => {
         dispatch(getTaskById(id))
     }, [id, dispatch])
 
-    useEffect(() => {
-        if (task && String(task.id) === String(id)) {
-            setContent(task.content || '')
-            setStartedAt(task.startedAt || '')
-            setFinishedAt(task.finishedAt || '')
-        }
-    }, [task, id])
+    // O store pode ainda ter a tarefa aberta anteriormente; só usa se for a da URL
+    const isLoaded = task && String(task.id) === String(id)
 
-    const handleBack = () => {
-        if (window.history.length > 1) {
-            navigate(-1)
-        } else {
-            navigate('/')
+    const label = isLoaded && task.createdAt
+        ? `Registro de ${new Date(task.createdAt).toLocaleDateString('pt-BR')}`
+        : 'Registro'
+
+    const handleSubmit = async (values) => {
+        try {
+            await dispatch(updateTask({ id: task.id, ...values })).unwrap()
+            navigate('/', { replace: true })
+        } catch (error) {
+            console.error(error)
         }
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        const updatedTask = {
-            id: task.id,
-            content,
-            startedAt,
-            finishedAt
-        }
-
+    const handleDelete = async () => {
         try {
-            await dispatch(updateTask(updatedTask)).unwrap()
+            await dispatch(deleteTask(task.id)).unwrap()
+            setDeleteModal(false)
             navigate('/', { replace: true })
         } catch (error) {
             console.error(error)
@@ -55,66 +48,24 @@ const TaskDetails = () => {
 
     return (
         <div className={styles.container}>
-            <header className={styles.header}>
-                <button
-                    type="button"
-                    className={styles.back_button}
-                    onClick={handleBack}
-                    aria-label="Voltar"
-                >
-                    <i className="bi bi-arrow-left-circle"></i>
-                </button>
-                <h1>Editar Tarefa</h1>
-            </header>
+            <PageHeader showBack label={label} title="Editar tarefa" />
 
-            <form className={styles.form} onSubmit={handleSubmit}>
-                <div className={styles.input_group}>
-                    <label htmlFor="content">Conteúdo da tarefa</label>
-                    <textarea
-                        id="content"
-                        rows={4}
-                        placeholder="Hoje eu fiz..."
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    />
+            {isLoaded && (
+                <TaskForm
+                    key={task.id}
+                    initialValues={task}
+                    onSubmit={handleSubmit}
+                    submitLabel="Salvar alterações"
+                    onDelete={() => setDeleteModal(true)}
+                />
+            )}
+
+            {!isLoaded && !loading && (
+                <div className={styles.not_found}>
+                    <h3>Tarefa não encontrada.</h3>
+                    <p>Ela pode ter sido apagada.</p>
                 </div>
-
-                <div className={styles.time_row}>
-                    <div className={styles.input_group}>
-                        <label htmlFor="startedAt">Começou às</label>
-                        <input
-                            id="startedAt"
-                            type="time"
-                            value={startedAt}
-                            onChange={(e) => setStartedAt(e.target.value)}
-                        />
-                    </div>
-
-                    <div className={styles.input_group}>
-                        <label htmlFor="finishedAt">Terminou às</label>
-                        <input
-                            id="finishedAt"
-                            type="time"
-                            value={finishedAt}
-                            onChange={(e) => setFinishedAt(e.target.value)}
-                        />
-                    </div>
-                </div>
-
-                <div className={styles.actions_div}>
-                    <button type="submit" className={styles.submit_button}>
-                        Editar
-                    </button>
-                    <button
-                        type="button"
-                        className={styles.delete_button}
-                        onClick={() => setDeleteModal(true)}
-                        aria-label="Apagar tarefa"
-                    >
-                        <i className="bi bi-trash3"></i>
-                    </button>
-                </div>
-            </form>
+            )}
 
             {deleteModal && (
                 <div
@@ -123,29 +74,31 @@ const TaskDetails = () => {
                 >
                     <div
                         className={styles.delete_modal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="delete-title"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h2>Apagar tarefa?</h2>
+                        <span className={styles.modal_icon} aria-hidden="true">
+                            <i className="bi bi-trash3"></i>
+                        </span>
+                        <h2 id="delete-title">Apagar tarefa?</h2>
+                        <p>Essa ação não pode ser desfeita.</p>
+
                         <div className={styles.delete_modal_buttons}>
                             <button
                                 type="button"
+                                className={styles.cancel_button}
                                 onClick={() => setDeleteModal(false)}
                             >
-                                Não
+                                Cancelar
                             </button>
                             <button
                                 type="button"
-                                onClick={async () => {
-                                    try {
-                                        await dispatch(deleteTask(task.id)).unwrap()
-                                        setDeleteModal(false)
-                                        navigate('/', { replace: true })
-                                    } catch (error) {
-                                        console.error(error)
-                                    }
-                                }}
+                                className={styles.confirm_button}
+                                onClick={handleDelete}
                             >
-                                Sim
+                                Apagar
                             </button>
                         </div>
                     </div>

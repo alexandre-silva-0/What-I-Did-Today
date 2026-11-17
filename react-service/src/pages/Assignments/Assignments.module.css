@@ -1,0 +1,81 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 680px;
+    min-height: 100vh;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Botão redondo de adicionar (vai no slot "action" do PageHeader) */
+.add_button {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background-color: #2563EB;
+    color: #FFFFFF;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+    transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.add_button:hover {
+    background-color: #1D4ED8;
+}
+
+.add_button:active {
+    transform: scale(0.92);
+}
+
+.add_button:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.35);
+    outline-offset: 2px;
+}
+
+.card_list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 16px;
+    gap: 14px;
+    margin-bottom: 110px;
+}
+
+.no_assignments {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 55vh;
+    padding: 0 20px;
+}
+
+.no_assignments h3 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    color: #1A1A1A;
+}
+
+.no_assignments p {
+    margin: 0;
+    font-size: 15px;
+    color: #888888;
+}
+
+@media (min-width: 768px) {
+    .card_list {
+        padding: 0 24px;
+        gap: 16px;
+    }
+}
