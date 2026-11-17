@@ -5,6 +5,8 @@ import taskService from "../services/taskService";
 const initialState = {
     tasks: [],
     task: {},
+    assignment: {},
+    assignments: [],
     loading: false,
     error: false,
     success: false,
@@ -59,6 +61,50 @@ export const deleteTask = createAsyncThunk(
     "tasks/delete",
     async (id, { rejectWithValue }) => {
         const data = await taskService.deleteTask(Number(id))
+
+        if (data.errors) return rejectWithValue(data.errors[0])
+
+        return data
+    }
+)
+
+export const createAssignment = createAsyncThunk(
+    "assignments/create",
+    async (assignment, { rejectWithValue }) => {
+        const data = await taskService.createAssignment(assignment)
+
+        if (data.errors) return rejectWithValue(data.errors[0])
+
+        return data
+    }
+)
+
+export const updateAssignment = createAsyncThunk(
+    "assignments/update",
+    async (updatedAssignment, { rejectWithValue }) => {
+        const data = await taskService.updateAssignment(updatedAssignment)
+
+        if (data.errors) return rejectWithValue(data.errors[0])
+
+        return data
+    }
+)
+
+export const deleteAssignment = createAsyncThunk(
+    "assignments/delete",
+    async (id, { rejectWithValue }) => {
+        const data = await taskService.deleteAssignment(id)
+
+        if (data.errors) return rejectWithValue(data.errors[0])
+
+        return data
+    }
+)
+
+export const getAssignments = createAsyncThunk(
+    "assignments/all",
+    async (_, { rejectWithValue }) => {
+        const data = await taskService.getAssignments()
 
         if (data.errors) return rejectWithValue(data.errors[0])
 
@@ -169,6 +215,75 @@ export const taskSlice = createSlice({
                 state.loading = false
                 state.error = action.payload
                 state.task = {}
+            })
+            .addCase(createAssignment.pending, (state) => {
+                state.loading = true
+                state.error = false
+            })
+            .addCase(createAssignment.fulfilled, (state, action) => {
+                state.assignment = action.payload.data
+                state.assignments.unshift(action.payload.data)
+                state.error = false
+                state.success = true
+                state.loading = false
+                state.message = action.payload.msg
+            })
+            .addCase(createAssignment.rejected, (state, action) => {
+                state.error = action.payload.errors
+                state.loading = false
+            })
+            .addCase(updateAssignment.pending, (state) => {
+                state.loading = true
+                state.error = false
+            })
+            .addCase(updateAssignment.fulfilled, (state, action) => {
+                state.assignment = action.payload.data
+                state.assignments = state.assignments.map((assignment) =>
+                    assignment.id === action.payload.data.id ? action.payload.data : assignment,
+                );
+                state.error = false
+                state.success = true
+                state.message = action.payload.msg
+                state.loading = false
+            })
+            .addCase(updateAssignment.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload
+                state.task = {}
+            })
+            .addCase(deleteAssignment.pending, (state) => {
+                state.loading = true
+                state.error = false
+            })
+            .addCase(deleteAssignment.fulfilled, (state, action) => {
+                state.assignment = {}
+                state.assignments = state.assignments.filter(
+                    (assignment) => assignment.id !== action.payload.data,
+                );
+                state.error = false
+                state.success = true
+                state.loading = false
+                state.message = action.payload.msg
+            })
+            .addCase(deleteAssignment.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload
+                state.task = {}
+            })
+            .addCase(getAssignments.pending, (state) => {
+                state.loading = true
+                state.error = false
+            })
+            .addCase(getAssignments.fulfilled, (state, action) => {
+                state.assignments = action.payload.data
+                state.error = false
+                state.success = action.payload.msg
+                state.loading = false
+            })
+            .addCase(getAssignments.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload
+                state.assignments = []
             })
     }
 })
