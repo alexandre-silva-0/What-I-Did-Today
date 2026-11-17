@@ -1,4 +1,5 @@
 import styles from './AssignmentCard.module.css'
+import { Link } from 'react-router-dom'
 
 // Mesmos valores do ENUM do model Assignment no back-end
 const STATUS = {
@@ -39,7 +40,10 @@ const AssignmentCard = ({ assignment }) => {
     const isDone = assignment.status === 'done'
 
     return (
-        <article className={`${styles.card} ${isDone ? styles.card_done : ''}`}>
+        <Link
+            to={`/assignment/${assignment.id}`}
+            className={`${styles.card} ${isDone ? styles.card_done : ''}`}
+        >
             <p className={styles.content}>{assignment.content}</p>
             <hr />
             <div className={styles.footer}>
@@ -55,7 +59,7 @@ const AssignmentCard = ({ assignment }) => {
                     </span>
                 )}
             </div>
-        </article>
+        </Link>
     )
 }
 

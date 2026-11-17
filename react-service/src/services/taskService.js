@@ -1,133 +1,60 @@
 import { api, requestConfig } from '../utils/config'
 
-const createTask = async (data) => {
-    const config = requestConfig("POST", data)
+const CONNECTION_ERROR = 'Não foi possível falar com o servidor. Recarregue a página e tente de novo.'
+
+/**
+ * Faz a requisição e sempre devolve um objeto no formato da API:
+ * - sucesso: { msg, data }
+ * - erro:    { errors: ['mensagem'] }
+ *
+ * Nunca devolve undefined nem um objeto de erro do fetch, então os thunks
+ * sempre caem no rejectWithValue quando algo dá errado (rede fora, sessão do
+ * Cloudflare Access expirada, resposta que não é JSON, status 4xx/5xx).
+ */
+const request = async (path, method = 'GET', data = null) => {
+    let res
 
     try {
-        const res = await fetch(api + '/api/tasks', config)
-            .then((res) => res.json())
-            .catch((err) => err)
-
-        return res
+        res = await fetch(api + path, requestConfig(method, data))
     } catch (error) {
-        console.log(error)
+        // Sem rede, servidor fora ou redirecionamento para o login do Access
+        console.error(error)
+        return { errors: [CONNECTION_ERROR] }
     }
+
+    // Resposta que não é JSON (ex.: página HTML de login ou de erro do proxy)
+    const body = await res.json().catch(() => null)
+
+    if (!body) {
+        return { errors: [CONNECTION_ERROR] }
+    }
+
+    if (!res.ok && !Array.isArray(body.errors)) {
+        return { errors: [`Erro ${res.status} no servidor. Tente de novo.`] }
+    }
+
+    return body
 }
 
-const getTasks = async () => {
-    const config = requestConfig("GET")
+const createTask = (data) => request('/api/tasks', 'POST', data)
 
-    try {
-        const res = await fetch(api + "/api/tasks", config)
-            .then((res) => res.json())
-            .catch((err) => err)
+const getTasks = () => request('/api/tasks')
 
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
+const getTaskById = (id) => request(`/api/tasks/${id}`)
 
-const getTaskById = async (id) => {
-    const config = requestConfig("GET")
+const updateTask = (data) => request(`/api/tasks/${data.id}`, 'PATCH', data)
 
-    try {
-        const res = await fetch(api + `/api/tasks/${id}`, config)
-            .then((res) => res.json())
-            .catch((err) => err)
+const deleteTask = (id) => request(`/api/tasks/${id}`, 'DELETE')
 
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
+const createAssignment = (data) => request('/api/assignments', 'POST', data)
 
-const updateTask = async (data) => {
-    const config = requestConfig("PATCH", data)
+const updateAssignment = (data) => request(`/api/assignments/${data.id}`, 'PATCH', data)
 
-    try {
+const deleteAssignment = (id) => request(`/api/assignments/${id}`, 'DELETE')
 
-        const res = await fetch(api + `/api/tasks/${data.id}`, config)
-            .then((res) => res.json())
-            .catch((err) => err)
+const getAssignments = () => request('/api/assignments')
 
-        return res
-
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const deleteTask = async (id) => {
-    const config = requestConfig("DELETE")
-
-    try {
-        const res = await fetch(api + `/api/tasks/${id}`, config)
-            .then((res) => res.json())
-            .catch(err => err)
-
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const createAssignment = async (data) => {
-    const config = requestConfig("POST", data)
-
-    try {
-        const res = await fetch(api + '/api/assignments', config)
-            .then((res) => res.json())
-            .catch(err => err)
-
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const updateAssignment = async (data) => {
-    const config = requestConfig("PATCH", data)
-
-    try {
-        const res = await fetch(api + `/api/assignments/${data.id}`, config)
-            .then((res) => res.json())
-            .catch(err => err)
-
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const deleteAssignment = async (id) => {
-    const config = requestConfig("DELETE")
-
-    try {
-        const res = await fetch(api + `/api/assignments/${id}`, config)
-            .then((res) => res.json())
-            .catch(err => err)
-
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const getAssignments = async () => {
-    const config = requestConfig("GET")
-
-    try {
-        const res = await fetch(api + '/api/assignments', config)
-            .then((res) => res.json())
-            .catch(err => err)
-
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
-
+const getAssignmentById = (id) => request(`/api/assignments/${id}`)
 
 const taskService = {
     createTask,
@@ -138,7 +65,8 @@ const taskService = {
     createAssignment,
     updateAssignment,
     deleteAssignment,
-    getAssignments
+    getAssignments,
+    getAssignmentById
 }
 
 export default taskService

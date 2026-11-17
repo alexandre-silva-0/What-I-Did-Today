@@ -2,27 +2,23 @@ import styles from './Assignments.module.css'
 import Navbar from '../../components/Navbar'
 import PageHeader from '../../components/PageHeader'
 import AssignmentCard from '../../components/AssignmentCard'
+import { useSelector, useDispatch } from 'react-redux'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { getAssignments } from '../../slices/taskSlice'
 
-// ------------------------------------------------------------------
-// DADOS FIXOS DE EXEMPLO: substituir pelos dados vindos da API/Redux.
-// Mesmo formato do model Assignment: { id, content, status, deadline }
-// ------------------------------------------------------------------
-const daysFromToday = (days) => {
-    const date = new Date()
-    date.setDate(date.getDate() + days)
-    return date.toISOString()
-}
-
-const mockAssignments = [
-    { id: 1, content: 'Ligar o React na rota /api/assignments', status: 'in_progress', deadline: daysFromToday(0) },
-    { id: 2, content: 'Revisar o tratamento de erros da API', status: 'pending', deadline: daysFromToday(3) },
-    { id: 3, content: 'Configurar Cloudflare Access', status: 'pending', deadline: daysFromToday(-2) },
-    { id: 4, content: 'Migrar o front para Vite', status: 'pending', deadline: null },
-    { id: 5, content: 'Corrigir CSS quebrado em produção', status: 'done', deadline: daysFromToday(-1) },
-]
 
 const Assignments = () => {
-    const assignments = mockAssignments
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    const { assignments } = useSelector((state) => state.task)
+
+    useEffect(() => {
+        dispatch(getAssignments())
+    }, [dispatch])
+
+
     const openCount = assignments.filter((a) => a.status !== 'done').length
 
     return (
@@ -31,10 +27,10 @@ const Assignments = () => {
                 label="Pendências"
                 title={openCount === 0 ? 'Tudo em dia' : `${openCount} em aberto`}
                 action={
-                    // TODO: abrir o formulário de nova pendência
                     <button
                         type="button"
                         className={styles.add_button}
+                        onClick={() => navigate('/assignment/create')}
                         aria-label="Adicionar pendência"
                         title="Adicionar pendência"
                     >

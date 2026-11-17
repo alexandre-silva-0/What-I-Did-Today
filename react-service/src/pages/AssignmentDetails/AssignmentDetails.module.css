@@ -1,0 +1,148 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 680px;
+    min-height: 100vh;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.not_found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 55vh;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.not_found h3 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    color: #1A1A1A;
+}
+
+.not_found p {
+    margin: 0;
+    font-size: 15px;
+    color: #888888;
+}
+
+/* ---------- Modal de exclusão ---------- */
+.modal_overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(17, 24, 39, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 9998;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.delete_modal {
+    width: 100%;
+    max-width: 340px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    padding: 24px 20px 20px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.14);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    animation: popIn 0.2s ease-out;
+}
+
+.modal_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background-color: #FEE2E2;
+    color: #DC2626;
+    font-size: 22px;
+}
+
+.delete_modal h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A1A;
+}
+
+.delete_modal p {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #6B7280;
+}
+
+.delete_modal_buttons {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.delete_modal_buttons button {
+    flex: 1;
+    height: 46px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.delete_modal_buttons button:active {
+    transform: scale(0.97);
+}
+
+.cancel_button {
+    background-color: #F4F5F7;
+    color: #4B5563;
+    border: 1px solid #E5E7EB;
+}
+
+.cancel_button:hover {
+    background-color: #E5E7EB;
+}
+
+.confirm_button {
+    background-color: #EF4444;
+    color: #FFFFFF;
+    border: none;
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25);
+}
+
+.confirm_button:hover {
+    background-color: #DC2626;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

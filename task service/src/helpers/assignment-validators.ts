@@ -39,4 +39,6 @@ export const updateAssignmentValidation = [
     atLeastOneFieldRule(['content', 'status', 'deadline'])
 ]
 
+export const getAssignmentValidation = [assignmentIdRule]
+
 export const deleteAssignmentValidation = [assignmentIdRule]

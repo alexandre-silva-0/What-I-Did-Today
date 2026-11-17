@@ -112,6 +112,17 @@ export const getAssignments = createAsyncThunk(
     }
 )
 
+export const getAssignmentById = createAsyncThunk(
+    "assignments/id",
+    async (id, { rejectWithValue }) => {
+        const data = await taskService.getAssignmentById(id)
+
+        if (data.errors) return rejectWithValue(data.errors[0])
+
+        return data
+    }
+)
+
 export const taskSlice = createSlice({
     name: 'tasks',
     initialState,
@@ -122,6 +133,8 @@ export const taskSlice = createSlice({
             state.success = false
             state.task = {}
             state.tasks = []
+            state.assignment = {}
+            state.assignments = []
             state.message = null
         },
         clearMessage: (state) => {
@@ -145,7 +158,7 @@ export const taskSlice = createSlice({
                 state.message = action.payload.msg
             })
             .addCase(createTask.rejected, (state, action) => {
-                state.error = action.payload.errors
+                state.error = action.payload
                 state.loading = false
             })
             .addCase(getTasks.pending, (state) => {
@@ -153,7 +166,7 @@ export const taskSlice = createSlice({
                 state.error = false
             })
             .addCase(getTasks.fulfilled, (state, action) => {
-                state.tasks = action.payload.data
+                state.tasks = action.payload.data ?? []
                 state.error = false
                 state.success = action.payload.msg
                 state.loading = false
@@ -229,7 +242,7 @@ export const taskSlice = createSlice({
                 state.message = action.payload.msg
             })
             .addCase(createAssignment.rejected, (state, action) => {
-                state.error = action.payload.errors
+                state.error = action.payload
                 state.loading = false
             })
             .addCase(updateAssignment.pending, (state) => {
@@ -249,7 +262,7 @@ export const taskSlice = createSlice({
             .addCase(updateAssignment.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
-                state.task = {}
+                state.assignment = {}
             })
             .addCase(deleteAssignment.pending, (state) => {
                 state.loading = true
@@ -268,14 +281,14 @@ export const taskSlice = createSlice({
             .addCase(deleteAssignment.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
-                state.task = {}
+                state.assignment = {}
             })
             .addCase(getAssignments.pending, (state) => {
                 state.loading = true
                 state.error = false
             })
             .addCase(getAssignments.fulfilled, (state, action) => {
-                state.assignments = action.payload.data
+                state.assignments = action.payload.data ?? []
                 state.error = false
                 state.success = action.payload.msg
                 state.loading = false
@@ -284,6 +297,21 @@ export const taskSlice = createSlice({
                 state.loading = false
                 state.error = action.payload
                 state.assignments = []
+            })
+            .addCase(getAssignmentById.pending, (state) => {
+                state.loading = true
+                state.error = false
+            })
+            .addCase(getAssignmentById.fulfilled, (state, action) => {
+                state.assignment = action.payload.data
+                state.error = false
+                state.success = action.payload.msg
+                state.loading = false
+            })
+            .addCase(getAssignmentById.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload
+                state.assignment = {}
             })
     }
 })

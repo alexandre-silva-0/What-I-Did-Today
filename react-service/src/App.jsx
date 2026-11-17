@@ -14,6 +14,8 @@ import LoadingScreen from './components/LoadingScreen'
 import Toast from './components/Toast';
 import Logs from './pages/Logs/Logs';
 import Assignments from './pages/Assignments/Assignments';
+import CreateAssignment from './pages/CreateAssignment/CreateAssignment';
+import AssignmentDetails from './pages/AssignmentDetails/AssignmentDetails';
 
 function AppRoutes() {
 
@@ -31,6 +33,8 @@ function AppRoutes() {
         <Route path='/task/:id' element={<TaskDetails />}></Route>
         <Route path='/tasks/logs' element={<Logs />}></Route>
         <Route path='/activities' element={<Assignments />}></Route>
+        <Route path='/assignment/create' element={<CreateAssignment />}></Route>
+        <Route path='/assignment/:id' element={<AssignmentDetails />}></Route>
       </Routes>
     </>
   )

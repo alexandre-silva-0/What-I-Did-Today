@@ -5,7 +5,7 @@ import { Router } from "express";
 import {
     createTask, updateTask, deleteTask,
     getTasks, getTaskId, createAssignment, updateAssignment, deleteAssignment,
-    getAssignments
+    getAssignments, getAssignmentId
 } from "../controller/TaskController.js";
 
 //helpers
@@ -14,7 +14,7 @@ import {
 } from "../helpers/task-validators.js";
 import { validate } from "../helpers/handle-validations.js";
 import {
-    createAssignmentValidation, updateAssignmentValidation, deleteAssignmentValidation
+    createAssignmentValidation, updateAssignmentValidation, deleteAssignmentValidation, getAssignmentValidation
 } from "../helpers/assignment-validators.js";
 
 const router = Router()
@@ -28,5 +28,6 @@ router.post('/api/assignments', createAssignmentValidation, validate, createAssi
 router.patch('/api/assignments/:id', updateAssignmentValidation, validate, updateAssignment)
 router.delete('/api/assignments/:id', deleteAssignmentValidation, validate, deleteAssignment)
 router.get('/api/assignments', getAssignments)
+router.get('/api/assignments/:id', getAssignmentValidation, validate, getAssignmentId)
 
 export default router  

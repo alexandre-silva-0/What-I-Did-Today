@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 
 //repositories
-import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById, createNewAssignment, updateAnAssignment, destroyAssignment, getAllAssignments } from "../repositories/TaskRepository.js";
+import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById, createNewAssignment, updateAnAssignment, destroyAssignment, getAllAssignments, getAssignmentById } from "../repositories/TaskRepository.js";
 import { IUpdateTask } from "../dtos/tasks.dto.js";
 
 export async function createTask(req: Request, res: Response) {
@@ -158,6 +158,25 @@ export async function getAssignments(req: Request, res: Response) {
     } catch (error) {
         console.error("Erro ao carregar todas as pendências:", error)
         res.status(500).json({ errors: [`Não foi possível carregar todas as pendências...`] })
+    }
+
+}
+
+export async function getAssignmentId(req: Request, res: Response) {
+
+    const { id } = req.params
+
+    try {
+        const assignment = await getAssignmentById(Number(id))
+
+        res.status(200).json({
+            msg: "Sucesso ao carregar pendência",
+            data: assignment
+        })
+
+    } catch (error) {
+        console.error("Erro ao encontrar pendência:", error)
+        res.status(500).json({ errors: [`Não foi possível encontrar a pendência...`] })
     }
 
 }
