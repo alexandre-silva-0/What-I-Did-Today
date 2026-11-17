@@ -19,8 +19,7 @@ export async function createTask(req: Request, res: Response) {
             data: createdTask
         })
     } catch (error) {
-        res.status(500).json({ error: error })
-        console.error('Não foi possível registrar a atividade...', error)
+        res.status(500).json({ error: `Não foi possível registrar a tarefa... ${error}` })
     }
 }
 
@@ -52,14 +51,13 @@ export async function deleteTask(req: Request, res: Response) {
         await deleteCreatedTask(parseInt(id))
         res.status(200).json({ msg: "Task apagada com sucesso!", id: id })
     } catch (error) {
-        console.error("Não foi possível apagar task... ", error)
+        res.status(500).json({ error: `Não foi possível apagar a tarefa... ${error}` })
     }
 }
 
 export async function getTasks(req: Request, res: Response) {
 
     try {
-
         const tasks = await getAllTasks()
 
         res.status(200).json({
@@ -68,7 +66,7 @@ export async function getTasks(req: Request, res: Response) {
         })
 
     } catch (error) {
-        console.error("Não foi possível listar todas as tarefas. ", error)
+        res.status(500).json({ error: `Não foi possível listas todas as tarefas... ${error}` })
     }
 
 }
@@ -86,7 +84,7 @@ export async function getTaskId(req: Request, res: Response) {
         })
 
     } catch (error) {
-        console.error("Não foi possível localizar tarefa. ", error)
+        res.status(500).json({ error: `Não foi possível encontrar a atividade... ${error}` })
     }
 
 }
