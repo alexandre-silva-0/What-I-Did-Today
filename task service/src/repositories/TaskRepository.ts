@@ -1,6 +1,7 @@
 //interfaces
-import { IAssignment, ITask, IUpdateAssignment, IUpdateTask } from "../dtos/tasks.dto.js";
+import { IAssignment, IAttachmentFile, ITask, IUpdateAssignment, IUpdateTask } from "../dtos/tasks.dto.js";
 import { Assignment } from "../models/Assignment.js";
+import { Attachment } from "../models/Attachment.js";
 
 //models
 import { Task } from "../models/Task.js";
@@ -18,9 +19,14 @@ export const getTaskById = async (id: number) => {
     return await Task.findOne({ where: { id }, raw: true })
 }
 
+// Tarefa com a lista de anexos (para a tela de edição)
+export const getTaskWithAttachments = async (id: number) => {
+    return await Task.findByPk(id, { include: [Attachment] })
+}
+
 export const updateTaskData = async (data: IUpdateTask, id: number) => {
     await Task.update(data, { where: { id } })
-    return Task.findByPk(id, { raw: true })
+    return getTaskWithAttachments(id)
 }
 
 export const deleteCreatedTask = async (id: number) => {
@@ -29,7 +35,7 @@ export const deleteCreatedTask = async (id: number) => {
 }
 
 export const getAllTasks = async () => {
-    return await Task.findAll({ raw: true, order: [['createdAt', 'DESC']] })
+    return await Task.findAll({ include: [Attachment], order: [['createdAt', 'DESC']] })
 }
 
 export const createNewAssignment = async (assignment: IAssignment) => {
@@ -56,4 +62,21 @@ export const getAllAssignments = async () => {
 
 export const getAssignmentById = async (id: number) => {
     return await Assignment.findByPk(id, { raw: true })
+}
+
+export const createAttachments = async (taskId: number, files: IAttachmentFile[]) => {
+    return await Attachment.bulkCreate(files.map((file) => ({ ...file, taskId })))
+}
+
+export const getAttachmentById = async (id: number) => {
+    return await Attachment.findByPk(id, { raw: true })
+}
+
+export const getAttachmentsByTask = async (taskId: number) => {
+    return await Attachment.findAll({ where: { taskId }, raw: true })
+}
+
+export const destroyAttachment = async (id: number) => {
+    await Attachment.destroy({ where: { id } })
+    return
 }

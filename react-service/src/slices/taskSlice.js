@@ -123,6 +123,40 @@ export const getAssignmentById = createAsyncThunk(
     }
 )
 
+export const uploadAttachments = createAsyncThunk(
+    "attachments/upload",
+    async ({ taskId, files }, { rejectWithValue }) => {
+        const data = await taskService.uploadAttachments(taskId, files)
+
+        if (data.errors) return rejectWithValue(data.errors[0])
+
+        return data
+    }
+)
+
+export const deleteAttachment = createAsyncThunk(
+    "attachments/delete",
+    async (id, { rejectWithValue }) => {
+        const data = await taskService.deleteAttachment(id)
+
+        if (data.errors) return rejectWithValue(data.errors[0])
+
+        return data
+    }
+)
+
+// Aplica uma mudança na lista de anexos da tarefa aberta e da mesma tarefa na lista
+const updateTaskAttachments = (state, taskId, change) => {
+    const apply = (task) => {
+        if (task && task.id === taskId) {
+            task.attachments = change(task.attachments ?? [])
+        }
+    }
+
+    apply(state.task)
+    state.tasks.forEach(apply)
+}
+
 export const taskSlice = createSlice({
     name: 'tasks',
     initialState,
@@ -162,33 +196,37 @@ export const taskSlice = createSlice({
                 state.loading = false
             })
             .addCase(getTasks.pending, (state) => {
-                state.loading = true
+                // Com a lista já no store, atualiza em segundo plano sem cobrir a tela
+                state.loading = state.tasks.length === 0
                 state.error = false
             })
             .addCase(getTasks.fulfilled, (state, action) => {
                 state.tasks = action.payload.data ?? []
                 state.error = false
-                state.success = action.payload.msg
+                state.success = true
                 state.loading = false
             })
             .addCase(getTasks.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.tasks = []
             })
-            .addCase(getTaskById.pending, (state) => {
-                state.loading = true
+            .addCase(getTaskById.pending, (state, action) => {
+                // Só cobre a tela se a tarefa aberta ainda não for a pedida
+                state.loading = String(state.task?.id) !== String(action.meta.arg)
                 state.error = false
             })
             .addCase(getTaskById.fulfilled, (state, action) => {
                 state.task = action.payload.data
                 state.error = false
-                state.success = action.payload.msg
+                state.success = true
                 state.loading = false
             })
             .addCase(getTaskById.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.task = {}
             })
             .addCase(updateTask.pending, (state) => {
@@ -208,6 +246,7 @@ export const taskSlice = createSlice({
             .addCase(updateTask.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.task = {}
             })
             .addCase(deleteTask.pending, (state) => {
@@ -227,6 +266,7 @@ export const taskSlice = createSlice({
             .addCase(deleteTask.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.task = {}
             })
             .addCase(createAssignment.pending, (state) => {
@@ -262,6 +302,7 @@ export const taskSlice = createSlice({
             .addCase(updateAssignment.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.assignment = {}
             })
             .addCase(deleteAssignment.pending, (state) => {
@@ -281,37 +322,74 @@ export const taskSlice = createSlice({
             .addCase(deleteAssignment.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.assignment = {}
             })
             .addCase(getAssignments.pending, (state) => {
-                state.loading = true
+                state.loading = state.assignments.length === 0
                 state.error = false
             })
             .addCase(getAssignments.fulfilled, (state, action) => {
                 state.assignments = action.payload.data ?? []
                 state.error = false
-                state.success = action.payload.msg
+                state.success = true
                 state.loading = false
             })
             .addCase(getAssignments.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.assignments = []
             })
-            .addCase(getAssignmentById.pending, (state) => {
-                state.loading = true
+            .addCase(getAssignmentById.pending, (state, action) => {
+                state.loading = String(state.assignment?.id) !== String(action.meta.arg)
                 state.error = false
             })
             .addCase(getAssignmentById.fulfilled, (state, action) => {
                 state.assignment = action.payload.data
                 state.error = false
-                state.success = action.payload.msg
+                state.success = true
                 state.loading = false
             })
             .addCase(getAssignmentById.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload
+                state.message = action.payload
                 state.assignment = {}
+            })
+            .addCase(uploadAttachments.pending, (state) => {
+                state.loading = true
+                state.error = false
+            })
+            .addCase(uploadAttachments.fulfilled, (state, action) => {
+                const { taskId, attachments } = action.payload.data
+                updateTaskAttachments(state, taskId, (list) => [...list, ...attachments])
+                state.error = false
+                state.success = true
+                state.loading = false
+                state.message = action.payload.msg
+            })
+            .addCase(uploadAttachments.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload
+                state.message = action.payload
+            })
+            .addCase(deleteAttachment.pending, (state) => {
+                state.loading = true
+                state.error = false
+            })
+            .addCase(deleteAttachment.fulfilled, (state, action) => {
+                const { id, taskId } = action.payload.data
+                updateTaskAttachments(state, taskId, (list) => list.filter((item) => item.id !== id))
+                state.error = false
+                state.success = true
+                state.loading = false
+                state.message = action.payload.msg
+            })
+            .addCase(deleteAttachment.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload
+                state.message = action.payload
             })
     }
 })

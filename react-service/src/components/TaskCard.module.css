@@ -93,6 +93,17 @@
   white-space: nowrap;
 }
 
+/* Clipe com a quantidade de anexos */
+.attachments {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4B5563;
+  white-space: nowrap;
+}
+
 .chevron {
   margin-left: auto;
   font-size: 14px;

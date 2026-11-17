@@ -2,7 +2,7 @@ import styles from './TaskDetails.module.css'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteTask, getTaskById, updateTask } from '../../slices/taskSlice'
+import { deleteAttachment, deleteTask, getTaskById, updateTask, uploadAttachments } from '../../slices/taskSlice'
 
 //components
 import PageHeader from '../../components/PageHeader'
@@ -27,11 +27,21 @@ const TaskDetails = () => {
         ? `Registro de ${new Date(task.createdAt).toLocaleDateString('pt-BR')}`
         : 'Registro'
 
-    const handleSubmit = async (values) => {
+    const handleSubmit = async (values, { files, removedAttachmentIds }) => {
         try {
             await dispatch(updateTask({ id: task.id, ...values })).unwrap()
+
+            for (const attachmentId of removedAttachmentIds) {
+                await dispatch(deleteAttachment(attachmentId)).unwrap()
+            }
+
+            if (files.length > 0) {
+                await dispatch(uploadAttachments({ taskId: task.id, files })).unwrap()
+            }
+
             navigate('/', { replace: true })
         } catch (error) {
+            // O Toast mostra o motivo; ela continua na tela para tentar de novo
             console.error(error)
         }
     }

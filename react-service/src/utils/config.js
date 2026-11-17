@@ -7,13 +7,11 @@ export const requestConfig = (method, data = null) => {
     if (method === "DELETE" || data === null) {
         config = {
             method: method,
-            credentials: "include",
             headers: {},
         };
     } else {
         config = {
             method: method,
-            credentials: "include",
             body: JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json",

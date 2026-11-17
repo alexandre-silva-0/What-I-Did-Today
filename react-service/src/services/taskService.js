@@ -2,22 +2,17 @@ import { api, requestConfig } from '../utils/config'
 
 const CONNECTION_ERROR = 'Não foi possível falar com o servidor. Recarregue a página e tente de novo.'
 
-/**
- * Faz a requisição e sempre devolve um objeto no formato da API:
- * - sucesso: { msg, data }
- * - erro:    { errors: ['mensagem'] }
- *
- * Nunca devolve undefined nem um objeto de erro do fetch, então os thunks
- * sempre caem no rejectWithValue quando algo dá errado (rede fora, sessão do
- * Cloudflare Access expirada, resposta que não é JSON, status 4xx/5xx).
- */
 const request = async (path, method = 'GET', data = null) => {
+    // FormData (anexos) vai como multipart: o navegador monta o Content-Type sozinho
+    const config = data instanceof FormData
+        ? { method, body: data }
+        : requestConfig(method, data)
+
     let res
 
     try {
-        res = await fetch(api + path, requestConfig(method, data))
+        res = await fetch(api + path, config)
     } catch (error) {
-        // Sem rede, servidor fora ou redirecionamento para o login do Access
         console.error(error)
         return { errors: [CONNECTION_ERROR] }
     }
@@ -56,6 +51,17 @@ const getAssignments = () => request('/api/assignments')
 
 const getAssignmentById = (id) => request(`/api/assignments/${id}`)
 
+const uploadAttachments = (taskId, files) => {
+    const formData = new FormData()
+    files.forEach((file) => formData.append('files', file))
+    return request(`/api/tasks/${taskId}/attachments`, 'POST', formData)
+}
+
+const deleteAttachment = (id) => request(`/api/attachments/${id}`, 'DELETE')
+
+// Endereço para abrir/baixar o arquivo (usado em <img> e links)
+export const attachmentUrl = (id) => `${api}/api/attachments/${id}/file`
+
 const taskService = {
     createTask,
     getTasks,
@@ -66,7 +72,9 @@ const taskService = {
     updateAssignment,
     deleteAssignment,
     getAssignments,
-    getAssignmentById
+    getAssignmentById,
+    uploadAttachments,
+    deleteAttachment
 }
 
 export default taskService

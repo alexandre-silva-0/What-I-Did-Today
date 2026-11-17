@@ -1,4 +1,5 @@
-import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType, AllowNull } from "sequelize-typescript";
+import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType, AllowNull, HasMany } from "sequelize-typescript";
+import { Attachment } from "./Attachment.js";
 
 @Table({
     tableName: 'task',
@@ -22,4 +23,8 @@ export class Task extends Model {
     @AllowNull(true)
     @Column(DataType.TIME)
     declare finishedAt: string
+
+    // Apagar a tarefa apaga os registros dos anexos (os arquivos são apagados no controller)
+    @HasMany(() => Attachment, { onDelete: 'CASCADE' })
+    declare attachments: Attachment[]
 }

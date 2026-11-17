@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { getTaskById } from "../repositories/TaskRepository.js";
+import { getAttachmentById, getTaskById } from "../repositories/TaskRepository.js";
 import { atLeastOneFieldRule, existingIdRule } from "./common-validators.js";
 
 const MAX_CONTENT = 255
@@ -52,3 +52,7 @@ export const updateTaskValidation = [
 export const getTaskValidation = [taskIdRule]
 
 export const deleteTaskValidation = [taskIdRule]
+
+export const uploadAttachmentsValidation = [taskIdRule]
+
+export const attachmentIdValidation = [existingIdRule(getAttachmentById, "Anexo não encontrado.")]

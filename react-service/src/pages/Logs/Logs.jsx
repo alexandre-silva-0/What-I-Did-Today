@@ -19,8 +19,11 @@ const Logs = () => {
 
     const [date, setDate] = useState(new Date().toLocaleDateString('en-CA'))
 
+    // createdAt vem em UTC; converte para a data local antes de comparar,
+    // senão tarefas criadas depois das 21h caem no dia seguinte
     const sortedTasks = tasks.filter((task) => {
-        return task.createdAt?.startsWith(date)
+        if (!task?.createdAt) return false
+        return new Date(task.createdAt).toLocaleDateString('en-CA') === date
     })
 
     useEffect(() => {

@@ -1,6 +1,8 @@
 import styles from './TaskForm.module.css'
 import { useState } from 'react'
 import { formatTime, getDuration } from '../utils/time'
+import { validateFiles } from '../utils/attachments'
+import AttachmentField from './AttachmentField'
 
 // Limite da coluna "content" (STRING = VARCHAR(255)) no model Task do back
 const MAX_CONTENT = 255
@@ -15,8 +17,9 @@ const DEFAULT_VALUES = {
  * Formulário de tarefa usado na criação e na edição.
  *
  * Props:
- * - initialValues: { content, startedAt, finishedAt } (horários "HH:MM" ou "HH:MM:SS")
- * - onSubmit(values): chamado com { content, startedAt, finishedAt }
+ * - initialValues: { content, startedAt, finishedAt, attachments } (horários "HH:MM" ou "HH:MM:SS")
+ * - onSubmit(values, attachmentChanges): values = { content, startedAt, finishedAt } e
+ *   attachmentChanges = { files: File[] novos, removedAttachmentIds: number[] }
  * - submitLabel: texto do botão principal
  * - error: mensagem de erro para mostrar acima dos botões
  * - onDelete: se informado, mostra o botão de apagar ao lado do principal
@@ -35,20 +38,45 @@ const TaskForm = ({
     const [startedAt, setStartedAt] = useState(formatTime(initialValues.startedAt))
     const [finishedAt, setFinishedAt] = useState(formatTime(initialValues.finishedAt))
 
+    // Anexos: os salvos que continuam, os removidos e os arquivos novos (enviados ao salvar)
+    const [attachments, setAttachments] = useState(initialValues.attachments ?? [])
+    const [removedAttachmentIds, setRemovedAttachmentIds] = useState([])
+    const [files, setFiles] = useState([])
+    const [fileError, setFileError] = useState(null)
+
     const duration = getDuration(startedAt, finishedAt)
     const sameTime = startedAt && finishedAt && startedAt === finishedAt
     const canSubmit = content.trim().length > 0 && Boolean(startedAt)
     const nearLimit = content.length >= MAX_CONTENT - 20
 
+    const handleAddFiles = (fileList) => {
+        const { accepted, error } = validateFiles(Array.from(fileList), files.length)
+        setFiles((current) => [...current, ...accepted])
+        setFileError(error)
+    }
+
+    const handleRemoveFile = (index) => {
+        setFiles((current) => current.filter((_, i) => i !== index))
+        setFileError(null)
+    }
+
+    const handleRemoveAttachment = (id) => {
+        setAttachments((current) => current.filter((attachment) => attachment.id !== id))
+        setRemovedAttachmentIds((current) => [...current, id])
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault()
         if (!canSubmit) return
 
-        onSubmit({
-            content: content.trim(),
-            startedAt,
-            finishedAt: finishedAt || null,
-        })
+        onSubmit(
+            {
+                content: content.trim(),
+                startedAt,
+                finishedAt: finishedAt || null,
+            },
+            { files, removedAttachmentIds }
+        )
     }
 
     return (
@@ -125,6 +153,28 @@ const TaskForm = ({
                 {sameTime && (
                     <span className={styles.hint}>Início e fim estão iguais.</span>
                 )}
+            </section>
+
+            {/* ---------- Anexos ---------- */}
+            <section className={styles.section}>
+                <div className={styles.section_title}>
+                    <label htmlFor="attachments" className={styles.section_label}>
+                        <i className="bi bi-paperclip" aria-hidden="true"></i>
+                        Anexos
+                    </label>
+                    {(attachments.length + files.length) > 0 && (
+                        <span className={styles.counter}>{attachments.length + files.length}</span>
+                    )}
+                </div>
+
+                <AttachmentField
+                    attachments={attachments}
+                    files={files}
+                    onAddFiles={handleAddFiles}
+                    onRemoveAttachment={handleRemoveAttachment}
+                    onRemoveFile={handleRemoveFile}
+                    error={fileError}
+                />
             </section>
 
             {error && (

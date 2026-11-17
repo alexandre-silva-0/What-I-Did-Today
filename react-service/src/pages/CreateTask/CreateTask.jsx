@@ -2,7 +2,7 @@ import styles from './CreateTask.module.css'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { createTask, clearMessage } from '../../slices/taskSlice'
+import { createTask, uploadAttachments, clearMessage } from '../../slices/taskSlice'
 
 //components
 import PageHeader from '../../components/PageHeader'
@@ -23,13 +23,28 @@ const CreateTask = () => {
         return () => clearTimeout(timer)
     }, [error, dispatch])
 
-    const handleSubmit = async (task) => {
+    const handleSubmit = async (task, { files }) => {
+        let created
+
         try {
-            await dispatch(createTask(task)).unwrap()
-            navigate('/', { replace: true })
+            created = await dispatch(createTask(task)).unwrap()
         } catch (error) {
             console.error(error)
+            return
         }
+
+        if (files.length > 0) {
+            try {
+                await dispatch(uploadAttachments({ taskId: created.data.id, files })).unwrap()
+            } catch (error) {
+                // A tarefa já foi salva: abre a edição para ela tentar enviar os anexos de novo
+                console.error(error)
+                navigate(`/task/${created.data.id}`, { replace: true })
+                return
+            }
+        }
+
+        navigate('/', { replace: true })
     }
 
     return (

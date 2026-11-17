@@ -1,8 +1,12 @@
 //dependencies
 import { Request, Response } from "express";
+import path from "path";
 
 //repositories
-import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById, createNewAssignment, updateAnAssignment, destroyAssignment, getAllAssignments, getAssignmentById } from "../repositories/TaskRepository.js";
+import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, createNewAssignment, updateAnAssignment, destroyAssignment, getAllAssignments, getAssignmentById, getTaskWithAttachments, createAttachments, getAttachmentById, getAttachmentsByTask, destroyAttachment } from "../repositories/TaskRepository.js";
+
+//helpers
+import { UPLOADS_DIR, decodeFileName, mimeTypeFor, removeStoredFiles } from "../helpers/upload.js";
 import { IUpdateTask } from "../dtos/tasks.dto.js";
 
 export async function createTask(req: Request, res: Response) {
@@ -48,7 +52,9 @@ export async function deleteTask(req: Request, res: Response) {
     const { id } = req.params
 
     try {
+        const attachments = await getAttachmentsByTask(Number(id))
         await deleteCreatedTask(Number(id))
+        await removeStoredFiles(attachments.map((attachment) => attachment.storedName))
         res.status(200).json({ msg: "Task apagada com sucesso!", data: Number(id) })
     } catch (error) {
         console.error("Erro ao deletar tarefa:", error)
@@ -78,7 +84,7 @@ export async function getTaskId(req: Request, res: Response) {
     const { id } = req.params
 
     try {
-        const task = await getTaskById(Number(id))
+        const task = await getTaskWithAttachments(Number(id))
 
         res.status(200).json({
             msg: "Sucesso ao carregar tarefa",
@@ -179,4 +185,81 @@ export async function getAssignmentId(req: Request, res: Response) {
         res.status(500).json({ errors: [`Não foi possível encontrar a pendência...`] })
     }
 
+}
+
+export async function uploadTaskAttachments(req: Request, res: Response) {
+    const { id } = req.params
+    const files = req.files as Express.Multer.File[]
+
+    try {
+        const attachments = await createAttachments(Number(id), files.map((file) => ({
+            originalName: decodeFileName(file.originalname),
+            storedName: file.filename,
+            mimeType: mimeTypeFor(file.originalname),
+            size: file.size
+        })))
+
+        res.status(201).json({
+            msg: files.length === 1 ? "Anexo adicionado." : `${files.length} anexos adicionados.`,
+            data: { taskId: Number(id), attachments }
+        })
+    } catch (error) {
+        // Não deixa arquivo órfão na pasta se o banco falhar
+        await removeStoredFiles(files.map((file) => file.filename))
+        console.error("Erro ao salvar anexos:", error)
+        res.status(500).json({ errors: [`Não foi possível salvar os anexos...`] })
+    }
+}
+
+// Formatos que o navegador mostra direto; o resto é baixado
+const INLINE_TYPES = ['image/', 'application/pdf', 'text/plain']
+
+export async function getAttachmentFile(req: Request, res: Response) {
+    const { id } = req.params
+
+    try {
+        const attachment = await getAttachmentById(Number(id))
+
+        if (!attachment) {
+            return res.status(404).json({ errors: ["Anexo não encontrado."] })
+        }
+
+        const inline = INLINE_TYPES.some((type) => attachment.mimeType.startsWith(type))
+        const disposition = inline ? 'inline' : 'attachment'
+
+        res.setHeader('Content-Type', attachment.mimeType)
+        res.setHeader('Content-Disposition', `${disposition}; filename*=UTF-8''${encodeURIComponent(attachment.originalName)}`)
+        res.setHeader('X-Content-Type-Options', 'nosniff')
+        // O arquivo de um id nunca muda, então o navegador pode guardar
+        res.setHeader('Cache-Control', 'private, max-age=31536000, immutable')
+
+        res.sendFile(path.join(UPLOADS_DIR, path.basename(attachment.storedName)), (error) => {
+            if (error && !res.headersSent) {
+                console.error("Arquivo do anexo não encontrado no disco:", error)
+                res.status(404).json({ errors: ["Arquivo do anexo não encontrado."] })
+            }
+        })
+    } catch (error) {
+        console.error("Erro ao abrir anexo:", error)
+        res.status(500).json({ errors: [`Não foi possível abrir o anexo...`] })
+    }
+}
+
+export async function deleteAttachment(req: Request, res: Response) {
+    const { id } = req.params
+
+    try {
+        const attachment = await getAttachmentById(Number(id))
+        await destroyAttachment(Number(id))
+
+        if (attachment) await removeStoredFiles([attachment.storedName])
+
+        res.status(200).json({
+            msg: "Anexo removido.",
+            data: { id: Number(id), taskId: attachment?.taskId ?? null }
+        })
+    } catch (error) {
+        console.error("Erro ao remover anexo:", error)
+        res.status(500).json({ errors: [`Não foi possível remover o anexo...`] })
+    }
 }

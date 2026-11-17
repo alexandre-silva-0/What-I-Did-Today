@@ -7,6 +7,7 @@ const TaskCard = ({ task }) => {
     const start = formatTime(task.startedAt)
     const end = formatTime(task.finishedAt)
     const duration = getDuration(task.startedAt, task.finishedAt)
+    const attachmentCount = task.attachments?.length ?? 0
 
     return (
         <Link to={`/task/${task.id}`} className={styles.card}>
@@ -19,6 +20,13 @@ const TaskCard = ({ task }) => {
                 </span>
 
                 {duration && <span className={styles.duration}>{duration}</span>}
+
+                {attachmentCount > 0 && (
+                    <span className={styles.attachments} title={`${attachmentCount} anexo(s)`}>
+                        <i className="bi bi-paperclip" aria-hidden="true"></i>
+                        {attachmentCount}
+                    </span>
+                )}
 
                 <i className={`bi bi-chevron-right ${styles.chevron}`} aria-hidden="true"></i>
             </div>

@@ -21,3 +21,10 @@ export interface IUpdateAssignment {
     status?: string,
     deadline?: string | null
 }
+
+export interface IAttachmentFile {
+    originalName: string,
+    storedName: string,
+    mimeType: string,
+    size: number
+}

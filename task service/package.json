@@ -2,26 +2,31 @@
   "name": "task-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsx watch src/index.ts"
+    "start": "tsx watch src/index.ts",
+    "build": "tsc",
+    "serve": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.6.6",
-    "@types/typescript": "^0.4.29",
     "cors": "^2.8.6",
     "dotenv": "^18.0.10",
     "express": "^5.3.0",
     "express-validator": "^7.3.2",
+    "multer": "^2.5.0",
     "mysql2": "^3.24.6",
-    "sequelize-typescript": "^2.1.6",
+    "sequelize-typescript": "^2.1.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.6",
+    "@types/typescript": "^0.4.29",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
