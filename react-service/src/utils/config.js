@@ -1,4 +1,5 @@
-export const api = import.meta.env.VITE_API_URL
+// Em produção fica vazio e as chamadas vão para /api/... no mesmo domínio
+export const api = import.meta.env.VITE_API_URL ?? ''
 
 export const requestConfig = (method, data = null) => {
     let config;

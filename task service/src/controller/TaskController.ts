@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 
 //repositories
 import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, getTaskById, createNewAssignment, updateAnAssignment, destroyAssignment, getAllAssignments } from "../repositories/TaskRepository.js";
+import { IUpdateTask } from "../dtos/tasks.dto.js";
 
 export async function createTask(req: Request, res: Response) {
     const { content, startedAt, finishedAt } = req.body
@@ -19,39 +20,39 @@ export async function createTask(req: Request, res: Response) {
             data: createdTask
         })
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível registrar a tarefa... ${error}` })
+        console.error("Erro ao registrar tarefa:", error)
+        res.status(500).json({ errors: [`Não foi possível registrar a tarefa...`] })
     }
 }
 
 export async function updateTask(req: Request, res: Response) {
     const { id } = req.params
 
-    if (typeof (id) !== "string") return res.status(400).json({ error: "ID inválido" })
-
     const { content, startedAt, finishedAt } = req.body
 
-    const updateData: Record<string, string> = {}
+    const updateData: IUpdateTask = {}
     if (content !== undefined) updateData.content = content;
     if (startedAt !== undefined) updateData.startedAt = startedAt;
     if (finishedAt !== undefined) updateData.finishedAt = finishedAt;
 
     try {
-        const updatedTask = await updateTaskData(updateData, parseInt(id))
+        const updatedTask = await updateTaskData(updateData, Number(id))
         res.status(200).json({ msg: 'Task atualizada', data: updatedTask })
     } catch (error) {
-        console.error("Não foi possível atualizar a task... ", error)
+        console.error("Erro ao atualizar tarefa:", error)
+        res.status(500).json({ errors: [`Não foi possível atualizar a tarefa...`] })
     }
 }
 
 export async function deleteTask(req: Request, res: Response) {
     const { id } = req.params
-    if (typeof (id) !== "string") return res.status(400).json({ error: "ID inválido" })
 
     try {
-        await deleteCreatedTask(parseInt(id))
-        res.status(200).json({ msg: "Task apagada com sucesso!", id: id })
+        await deleteCreatedTask(Number(id))
+        res.status(200).json({ msg: "Task apagada com sucesso!", data: Number(id) })
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível apagar a tarefa... ${error}` })
+        console.error("Erro ao deletar tarefa:", error)
+        res.status(500).json({ errors: [`Não foi possível deletar a tarefa...`] })
     }
 }
 
@@ -66,14 +67,15 @@ export async function getTasks(req: Request, res: Response) {
         })
 
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível listas todas as tarefas... ${error}` })
+        console.error("Erro ao listar todas as tarefas:", error)
+        res.status(500).json({ errors: [`Não foi possível listar todas as tarefas...`] })
     }
 
 }
 
 export async function getTaskId(req: Request, res: Response) {
 
-    let { id } = req.params
+    const { id } = req.params
 
     try {
         const task = await getTaskById(Number(id))
@@ -84,7 +86,9 @@ export async function getTaskId(req: Request, res: Response) {
         })
 
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível encontrar a atividade... ${error}` })
+        console.error("Erro ao encontrar tarefa:", error)
+
+        res.status(500).json({ errors: [`Não foi possível encontrar a tarefa...`] })
     }
 
 }
@@ -98,10 +102,11 @@ export async function createAssignment(req: Request, res: Response) {
         const createdAssignment = await createNewAssignment(assignment)
 
 
-        res.status(201).json({ msg: 'Pendência criada com sucessso.', data: createdAssignment })
+        res.status(201).json({ msg: 'Pendência criada com sucesso.', data: createdAssignment })
 
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível criar uma pendência... ${error}`, })
+        console.error("Erro ao criar pendência:", error)
+        res.status(500).json({ errors: [`Não foi possível criar uma pendência...`], })
     }
 }
 
@@ -119,7 +124,8 @@ export async function updateAssignment(req: Request, res: Response) {
         res.status(200).json({ msg: "Pendência atualizada.", data: updatedAssignment })
 
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível editar está pendência... ${error}`, })
+        console.error("Erro ao editar pendência:", error)
+        res.status(500).json({ errors: [`Não foi possível editar esta pendência...`], })
     }
 }
 
@@ -131,10 +137,11 @@ export async function deleteAssignment(req: Request, res: Response) {
 
         await destroyAssignment(Number(id))
 
-        res.status(200).json({ msg: "Pendência excluída com sucesso.", data: { id: id } })
+        res.status(200).json({ msg: "Pendência excluída com sucesso.", data: Number(id) })
 
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível excluir está pendência... ${error}`, })
+        console.error("Erro ao excluir pendência:", error)
+        res.status(500).json({ errors: [`Não foi possível excluir esta pendência...`], })
     }
 }
 
@@ -149,7 +156,8 @@ export async function getAssignments(req: Request, res: Response) {
         })
 
     } catch (error) {
-        res.status(500).json({ error: `Não foi possível carregar todas as pendências... ${error}` })
+        console.error("Erro ao carregar todas as pendências:", error)
+        res.status(500).json({ errors: [`Não foi possível carregar todas as pendências...`] })
     }
 
 }

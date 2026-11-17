@@ -9,8 +9,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignora requisições que não sejam GET ou chamadas para o backend
-  if (event.request.method !== 'GET' || event.request.url.includes('widt-back')) {
+  // Ignora requisições que não sejam GET e chamadas para a API (/api/...),
+  // para nunca mostrar dados velhos do cache
+  const { pathname } = new URL(event.request.url);
+  if (event.request.method !== 'GET' || pathname.startsWith('/api/')) {
     return;
   }
 

@@ -157,9 +157,8 @@ export const taskSlice = createSlice({
             })
             .addCase(deleteTask.fulfilled, (state, action) => {
                 state.task = {}
-                console.log(action.payload)
                 state.tasks = state.tasks.filter(
-                    (task) => task.id !== action.payload.id,
+                    (task) => task.id !== action.payload.data,
                 );
                 state.error = false
                 state.success = true
