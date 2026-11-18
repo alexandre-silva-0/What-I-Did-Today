@@ -5,18 +5,16 @@ import TaskCard from '../../components/TaskCard'
 import styles from './Home.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getTasks } from '../../slices/taskSlice'
+import { taskDate, todayInput } from '../../utils/date'
 
 const Home = () => {
     const dispatch = useDispatch()
     const { tasks } = useSelector((state) => state.task)
     const today = new Date()
-    const todayString = today.toLocaleDateString('en-CA')
+    const todayString = todayInput()
 
     const sortedTasks = Array.isArray(tasks)
-        ? tasks.filter((task) => {
-              if (!task?.createdAt) return false
-              return new Date(task.createdAt).toLocaleDateString('en-CA') === todayString
-          })
+        ? tasks.filter((task) => taskDate(task) === todayString)
         : []
 
     useEffect(() => {

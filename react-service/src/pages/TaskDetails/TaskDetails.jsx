@@ -7,6 +7,7 @@ import { deleteAttachment, deleteTask, getTaskById, updateTask, uploadAttachment
 //components
 import PageHeader from '../../components/PageHeader'
 import TaskForm from '../../components/TaskForm'
+import { taskDate, todayInput } from '../../utils/date'
 
 const TaskDetails = () => {
     const { task, loading } = useSelector((state) => state.task)
@@ -27,6 +28,9 @@ const TaskDetails = () => {
         ? `Registro de ${new Date(task.createdAt).toLocaleDateString('pt-BR')}`
         : 'Registro'
 
+    // Tarefa de hoje volta para a Home; de outro dia, para os Registros daquele dia
+    const pageFor = (date) => (!date || date === todayInput() ? '/' : `/tasks/logs?date=${date}`)
+
     const handleSubmit = async (values, { files, removedAttachmentIds }) => {
         try {
             await dispatch(updateTask({ id: task.id, ...values })).unwrap()
@@ -39,7 +43,7 @@ const TaskDetails = () => {
                 await dispatch(uploadAttachments({ taskId: task.id, files })).unwrap()
             }
 
-            navigate('/', { replace: true })
+            navigate(pageFor(values.date), { replace: true })
         } catch (error) {
             // O Toast mostra o motivo; ela continua na tela para tentar de novo
             console.error(error)
@@ -50,7 +54,7 @@ const TaskDetails = () => {
         try {
             await dispatch(deleteTask(task.id)).unwrap()
             setDeleteModal(false)
-            navigate('/', { replace: true })
+            navigate(pageFor(taskDate(task)), { replace: true })
         } catch (error) {
             console.error(error)
         }

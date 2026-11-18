@@ -10,6 +10,7 @@ import { Task } from "../models/Task.js";
 export const createNewTask = async (task: ITask) => {
     return await Task.create({
         content: task.content,
+        date: task.date,
         startedAt: task.startedAt,
         finishedAt: task.finishedAt
     })
@@ -35,7 +36,10 @@ export const deleteCreatedTask = async (id: number) => {
 }
 
 export const getAllTasks = async () => {
-    return await Task.findAll({ include: [Attachment], order: [['createdAt', 'DESC']] })
+    return await Task.findAll({
+        include: [Attachment],
+        order: [['date', 'DESC'], ['startedAt', 'DESC'], ['createdAt', 'DESC']]
+    })
 }
 
 export const createNewAssignment = async (assignment: IAssignment) => {

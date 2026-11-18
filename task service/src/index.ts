@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import database from './config/database.js'
+import { ensureTaskDateColumn } from './config/migrations.js'
 import taskRouters from './routes/TaskRoutes.js'
 import cors from 'cors'
 
@@ -25,6 +26,7 @@ const PORT = Number(process.env.PORT ?? 3001)
 const startServer = async () => {
     try {
         await database.sync()
+        await ensureTaskDateColumn()
     } catch (error) {
         console.error('Não foi possível conectar ao banco de dados:', error)
         process.exit(1)

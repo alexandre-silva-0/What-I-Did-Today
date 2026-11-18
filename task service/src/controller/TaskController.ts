@@ -7,13 +7,16 @@ import { createNewTask, deleteCreatedTask, updateTaskData, getAllTasks, createNe
 
 //helpers
 import { UPLOADS_DIR, decodeFileName, mimeTypeFor, removeStoredFiles } from "../helpers/upload.js";
+import { todayLocal } from "../helpers/date.js";
 import { IUpdateTask } from "../dtos/tasks.dto.js";
 
 export async function createTask(req: Request, res: Response) {
-    const { content, startedAt, finishedAt } = req.body
+    const { content, date, startedAt, finishedAt } = req.body
 
+    // Sem dia informado, a tarefa é de hoje
     const task = {
-        content, startedAt, finishedAt
+        content, startedAt, finishedAt,
+        date: date ?? todayLocal()
     }
 
     try {
@@ -32,10 +35,11 @@ export async function createTask(req: Request, res: Response) {
 export async function updateTask(req: Request, res: Response) {
     const { id } = req.params
 
-    const { content, startedAt, finishedAt } = req.body
+    const { content, date, startedAt, finishedAt } = req.body
 
     const updateData: IUpdateTask = {}
     if (content !== undefined) updateData.content = content;
+    if (date !== undefined) updateData.date = date;
     if (startedAt !== undefined) updateData.startedAt = startedAt;
     if (finishedAt !== undefined) updateData.finishedAt = finishedAt;
 

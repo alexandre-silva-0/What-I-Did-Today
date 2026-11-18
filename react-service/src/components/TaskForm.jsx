@@ -2,6 +2,7 @@ import styles from './TaskForm.module.css'
 import { useState } from 'react'
 import { formatTime, getDuration } from '../utils/time'
 import { validateFiles } from '../utils/attachments'
+import { addDays, formatDayLabel, todayInput } from '../utils/date'
 import AttachmentField from './AttachmentField'
 
 // Limite da coluna "content" (STRING = VARCHAR(255)) no model Task do back
@@ -9,6 +10,7 @@ const MAX_CONTENT = 255
 
 const DEFAULT_VALUES = {
     content: '',
+    date: null, // null = hoje
     startedAt: '09:00',
     finishedAt: '10:00',
 }
@@ -17,8 +19,9 @@ const DEFAULT_VALUES = {
  * Formulário de tarefa usado na criação e na edição.
  *
  * Props:
- * - initialValues: { content, startedAt, finishedAt, attachments } (horários "HH:MM" ou "HH:MM:SS")
- * - onSubmit(values, attachmentChanges): values = { content, startedAt, finishedAt } e
+ * - initialValues: { content, date, startedAt, finishedAt, attachments } (date "AAAA-MM-DD",
+ *   horários "HH:MM" ou "HH:MM:SS"). Campos que faltarem usam o padrão.
+ * - onSubmit(values, attachmentChanges): values = { content, date, startedAt, finishedAt } e
  *   attachmentChanges = { files: File[] novos, removedAttachmentIds: number[] }
  * - submitLabel: texto do botão principal
  * - error: mensagem de erro para mostrar acima dos botões
@@ -28,13 +31,18 @@ const DEFAULT_VALUES = {
  * com outra tarefa, troque a `key` do componente (ex.: key={task.id}).
  */
 const TaskForm = ({
-    initialValues = DEFAULT_VALUES,
+    initialValues: initialProp = DEFAULT_VALUES,
     onSubmit,
     submitLabel = 'Salvar',
     error,
     onDelete,
 }) => {
+    const initialValues = { ...DEFAULT_VALUES, ...initialProp }
+    const today = todayInput()
+    const yesterday = addDays(today, -1)
+
     const [content, setContent] = useState(initialValues.content ?? '')
+    const [date, setDate] = useState(initialValues.date ?? today)
     const [startedAt, setStartedAt] = useState(formatTime(initialValues.startedAt))
     const [finishedAt, setFinishedAt] = useState(formatTime(initialValues.finishedAt))
 
@@ -46,7 +54,8 @@ const TaskForm = ({
 
     const duration = getDuration(startedAt, finishedAt)
     const sameTime = startedAt && finishedAt && startedAt === finishedAt
-    const canSubmit = content.trim().length > 0 && Boolean(startedAt)
+    const isFutureDate = date > today
+    const canSubmit = content.trim().length > 0 && Boolean(startedAt) && Boolean(date) && !isFutureDate
     const nearLimit = content.length >= MAX_CONTENT - 20
 
     const handleAddFiles = (fileList) => {
@@ -72,6 +81,7 @@ const TaskForm = ({
         onSubmit(
             {
                 content: content.trim(),
+                date,
                 startedAt,
                 finishedAt: finishedAt || null,
             },
@@ -113,6 +123,47 @@ const TaskForm = ({
                         Quando?
                     </span>
                 </div>
+
+                {/* Dia: atalhos para hoje/ontem e calendário para os outros dias */}
+                <div className={styles.day_row} role="group" aria-label="Dia da tarefa">
+                    <button
+                        type="button"
+                        className={`${styles.day_chip} ${date === today ? styles.day_chip_active : ''}`}
+                        onClick={() => setDate(today)}
+                        aria-pressed={date === today}
+                    >
+                        Hoje
+                    </button>
+                    <button
+                        type="button"
+                        className={`${styles.day_chip} ${date === yesterday ? styles.day_chip_active : ''}`}
+                        onClick={() => setDate(yesterday)}
+                        aria-pressed={date === yesterday}
+                    >
+                        Ontem
+                    </button>
+                    <label
+                        className={`${styles.day_picker} ${date !== today && date !== yesterday ? styles.day_chip_active : ''}`}
+                    >
+                        <i className="bi bi-calendar3" aria-hidden="true"></i>
+                        <span>{date !== today && date !== yesterday ? formatDayLabel(date) : 'Outro dia'}</span>
+                        <input
+                            id="date"
+                            type="date"
+                            className={styles.day_input}
+                            value={date}
+                            max={today}
+                            onChange={(e) => e.target.value && setDate(e.target.value)}
+                            // No computador, abre o calendário ao clicar em qualquer parte do botão
+                            onClick={(e) => { try { e.currentTarget.showPicker() } catch { /* navegador sem showPicker */ } }}
+                            aria-label="Escolher outro dia"
+                        />
+                    </label>
+                </div>
+
+                {isFutureDate && (
+                    <span className={`${styles.hint} ${styles.hint_error}`}>Não dá para registrar em dias futuros.</span>
+                )}
 
                 <div className={styles.time_row}>
                     <div className={styles.time_field}>

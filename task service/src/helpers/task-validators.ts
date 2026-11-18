@@ -1,6 +1,7 @@
 import { body } from "express-validator";
 import { getAttachmentById, getTaskById } from "../repositories/TaskRepository.js";
 import { atLeastOneFieldRule, existingIdRule } from "./common-validators.js";
+import { todayLocal } from "./date.js";
 
 const MAX_CONTENT = 255
 
@@ -30,6 +31,20 @@ const startedAtRule = (required: boolean) => {
     return chain.matches(TIME_REGEX).withMessage("Hora de início inválida. Use o formato HH:MM.")
 }
 
+// Dia da tarefa ("AAAA-MM-DD"). No create é opcional (sem ele vale hoje);
+// no update, se vier, precisa ser uma data válida. Nunca no futuro
+const dateRule = (allowNull: boolean) =>
+    body('date')
+        .optional(allowNull ? { values: 'null' } : undefined)
+        .isDate({ format: 'YYYY-MM-DD', strictMode: true }).withMessage("Data inválida. Use o formato AAAA-MM-DD.")
+        .bail()
+        .custom((value: string) => {
+            if (value > todayLocal()) {
+                throw new Error("Não dá para registrar tarefas em dias futuros.")
+            }
+            return true
+        })
+
 // finishedAt pode ficar vazio: tarefa em andamento
 const finishedAtRule = body('finishedAt')
     .optional({ values: 'null' })
@@ -37,6 +52,7 @@ const finishedAtRule = body('finishedAt')
 
 export const createTaskValidation = [
     contentRule(true),
+    dateRule(true),
     startedAtRule(true),
     finishedAtRule
 ]
@@ -44,9 +60,10 @@ export const createTaskValidation = [
 export const updateTaskValidation = [
     taskIdRule,
     contentRule(false),
+    dateRule(false),
     startedAtRule(false),
     finishedAtRule,
-    atLeastOneFieldRule(['content', 'startedAt', 'finishedAt'])
+    atLeastOneFieldRule(['content', 'date', 'startedAt', 'finishedAt'])
 ]
 
 export const getTaskValidation = [taskIdRule]

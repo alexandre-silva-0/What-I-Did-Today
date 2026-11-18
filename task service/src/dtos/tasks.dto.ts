@@ -1,11 +1,13 @@
 export interface ITask {
     content: string,
+    date: string,
     startedAt: string,
     finishedAt?: string | null
 }
 
 export interface IUpdateTask {
     content?: string,
+    date?: string,
     startedAt?: string,
     finishedAt?: string | null
 }

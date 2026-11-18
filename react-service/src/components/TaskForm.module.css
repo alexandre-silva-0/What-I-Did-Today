@@ -146,6 +146,67 @@
   color: #6B7280;
 }
 
+.hint_error {
+  color: #B91C1C;
+  font-weight: 600;
+}
+
+/* ---------- Dia: Hoje / Ontem / Outro dia ---------- */
+.day_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 8px;
+}
+
+.day_chip,
+.day_picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 12px;
+  border: 1.5px solid #ECEEF2;
+  background-color: #F5F6F8;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4B5563;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.day_chip:active,
+.day_picker:active {
+  transform: scale(0.97);
+}
+
+.day_chip:focus-visible,
+.day_picker:has(input:focus-visible) {
+  outline: 3px solid rgba(37, 99, 235, 0.4);
+  outline-offset: 2px;
+}
+
+.day_chip_active {
+  color: #1D4ED8;
+  background-color: #EEF3FF;
+  border-color: rgba(37, 99, 235, 0.45);
+}
+
+/* O input de data cobre o botão "Outro dia" inteiro, invisível:
+   tocar em qualquer parte abre o calendário do celular */
+.day_input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
 /* ---------- Erro ---------- */
 .error {
   display: flex;
